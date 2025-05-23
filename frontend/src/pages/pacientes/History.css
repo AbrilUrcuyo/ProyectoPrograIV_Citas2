@@ -1,0 +1,129 @@
+.main-content {
+    padding: 20px;
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: normal;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.patient-name {
+    color: #4277c5;
+    font-weight: normal;
+}
+
+/* Search Form */
+.search-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.search-group {
+    display: flex;
+}
+
+.search-label {
+    background-color: #e9ecef;
+    padding: 10px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 5px 0 0 5px;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.search-select, .search-input {
+    padding: 10px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 0 5px 5px 0;
+    width: 200px;
+}
+
+.search-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 25px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Appointment Cards */
+.appointments {
+    margin-top: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    padding-bottom: 20px;
+}
+
+.appointment {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.doctor-photo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.appointment-details {
+    vertical-align: top;
+    width: 45%;
+}
+
+.doctor-code {
+    color: #2196f3;
+    margin-left: 10px;
+}
+
+.location {
+    color: #777;
+    font-size: 16px;
+}
+
+.date {
+    color: #ff9800;
+    font-size: large;
+    vertical-align: top;
+    display: block;
+}
+
+.status {
+    padding: 10px 10px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: bold;
+    width: 120px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.status.pending {
+    background-color: yellow;
+    color: black;
+}
+
+.status.attended {
+    background-color: green;
+    color: white;
+}
+
+.status.confirmed {
+    background-color: lawngreen;
+    color: white;
+}
+
+.status.canceled {
+    background-color: darkred;
+    color: white;
+}

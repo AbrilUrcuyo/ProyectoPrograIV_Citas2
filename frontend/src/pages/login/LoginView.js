@@ -1,0 +1,86 @@
+import React, { useState } from 'react';
+import './LoginView.css';
+
+import userImg from '../images/user.png';
+import cuentaImg from '../images/cuenta.png';
+import llaveImg from '../images/llave.png';
+import {Link} from "react-router-dom"; // corregido
+
+function LoginView () {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        // Here you can handle the login logic, for now, we just log the inputs
+        console.log('Username:', username);
+        console.log('Password:', password);
+        // Reset fields after submission
+        setUsername('');
+        setPassword('');
+    };
+
+    return (
+        <div className="container">
+            <div className="LoginPage">
+                <div className="LoginTitule">LOGIN</div>
+                <div className="loginBlock">
+                    <div className="userImg">
+                        <img src={userImg} alt="userIMG" width="20%" />
+                    </div>
+                    <form onSubmit={handleSubmit}>
+                        <div className="row">
+                            <div className="LogininputText">
+                                <div className="icon">
+                                    <img src={cuentaImg} alt="iconUimg" />
+                                </div>
+                                <input
+                                    type="text"
+                                    id="username"
+                                    name="username"
+                                    placeholder="User name"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="LogininputText">
+                                <div className="icon">
+                                    <img src={llaveImg} alt="iconUimg" />
+                                </div>
+                                <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    placeholder="User password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <div className="Loginbutton">
+                            <button type="submit">Log in</button>
+                        </div>
+                        {error && (
+                            <div className="warning">
+                                <div><span>{error}</span></div>
+                            </div>
+                        )}
+                    </form>
+                </div>
+                <div className="LoginEnd">
+                    <div>Don't have an account?</div>
+                    <div>
+                        <p> <Link to="/register">Register Here</Link> </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default LoginView;

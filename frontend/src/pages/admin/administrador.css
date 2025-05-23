@@ -1,0 +1,68 @@
+/* Contenedor principal centrado */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+/* Caja de login reutilizada para la gestión */
+.LoginPage {
+    display: flex;
+    width: 30%;
+    flex-direction: column;
+    height: 70vh;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    border: 1px solid #c1c1bd;
+}
+
+/* Título */
+.LoginTitule {
+    text-align: center;
+    font-size: 30px;
+    border-radius: 5px 5px 0 0;
+    background-color: #f0f1f2;
+}
+
+/* Tabla */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    background: white;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+/* Botones de acción */
+.botonAceptar {
+    border-radius: 20%;
+    color: white;
+    font-size: 10px;
+    background-color: green;
+    border: none;
+    padding: 5px 15px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.botonRechazar {
+    border-radius: 20%;
+    color: white;
+    font-size: 10px;
+    background-color: darkred;
+    border: none;
+    padding: 5px 15px;
+    cursor: pointer;
+}
+
+/* Opcional: espacio entre formularios de botones */
+td form {
+    display: inline-block;
+    margin: 0 2px;
+}

@@ -1,0 +1,83 @@
+body {
+    background-color: #f5f5f5;
+}
+
+.container-confir-citas {
+    display: grid;
+    place-items: center;
+    margin: 0;
+}
+
+.confirmation-card {
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+    background: white;
+    padding: 30px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    justify-content: center;
+    display: grid;
+    place-items: center;
+    margin: 0;
+}
+
+.doctor-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    object-fit: cover;
+}
+
+.doctor-name {
+    font-size: 22px;
+    color: #555;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cita-location {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.confirmar-btn {
+    background-color: #e3f2fd;
+    color: #2196f3;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 25px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.cancelar-btn {
+    background-color: #e3f2fd;
+    color: #2196f3;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 25px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
