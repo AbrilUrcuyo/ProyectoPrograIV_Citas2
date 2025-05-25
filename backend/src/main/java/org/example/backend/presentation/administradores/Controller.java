@@ -4,10 +4,7 @@ package org.example.backend.presentation.administradores;
 import org.example.backend.logic.Medico;
 import org.example.backend.logic.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,4 +29,14 @@ public class Controller {
                 .collect(Collectors.toList());
     }
 
+    @PostMapping("/{idMedico}/aprobar")
+    public void aprobarMedico(@PathVariable String idMedico){
+        service.actualizarEstadoMedico(idMedico, "Aprobado");
+    }
+
+    @PostMapping("/{idMedico}/rechazar")
+    public void rechazarMedico(@PathVariable String idMedico){
+        service.actualizarEstadoMedico(idMedico, "Rechazado");
+    }
 }
+

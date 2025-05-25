@@ -4,12 +4,16 @@ package org.example.backend.logic;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "usuarios", schema = "citasmedicas")
-public class Usuario {
-
-
+public class Usuario implements UserDetails {
 
 
     @Id
@@ -82,4 +86,18 @@ public class Usuario {
         this.paciente = paciente;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(() -> tipo);
+    }
+
+    @Override
+    public String getPassword() {
+        return this.clave;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.id;
+    }
 }

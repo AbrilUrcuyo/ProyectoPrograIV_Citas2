@@ -13,12 +13,65 @@ import headerLogo from './pages/images/doctorHeader.jpg';
 import instaImage from './pages/images/instagram.png';
 import facebookImage from './pages/images/facebook.png';
 import twitterImg from './pages/images/logotipo-de-twitter.png';
-import React from "react";
+import React, {Profiler, useState} from "react";
 import ConfirmView from "./pages/pacientes/ConfirmView";
 import BuscarCitas from "./pages/login/BuscarCitas";
 import AdminView from "./pages/admin/medicosPendientes";
+import PerfilMedicoView from "./pages/medicos/PerfilMedicoView";
 
-function Header() {
+function Header({user, setUser}) {
+    const[visible, setVisible] = useState(false);
+    const backend="http://localhost:8080";
+
+    function handleLogin(user){
+        let url = backend+'/usuarios/login';
+        const request = new Request(url,
+            {method: "POST",headers:{'Content-Type': 'application/json'}, body: JSON.stringify(user)});
+        (async ()=>{
+            const response = await fetch(request);
+            if(!response.ok){ alert("Error:"+response.status);return;}
+            const token = await response.text();
+            localStorage.setItem('_token', token);
+            setUser(getUser(token));
+            setVisible(true);
+        })();
+    }
+
+    function getUser(token){
+        try {
+            const parts =token.split(',');
+            if(parts.length !== 3){
+                throw new Error('Invalid JNT format');
+            }
+            const payloadEnconded= parts[1];
+            const payload= JSON.parse(atob(payloadEnconded));
+            return {id:payload.id, rol:payload.scope[0], name: payload.name};
+
+        }catch(error){
+            console.error('Error decoding JNT: ',error);
+            return null;
+        }
+    }
+
+    // if(user.id===null){
+    //         // search= (<> <Link to="/register">Register </Link> <>/></>);
+    //         //     login= (<> <Link to="/login">Login </Link> <>/>);
+    // }else if(user.id==="Paciente"){
+    //     // History
+    //     // Perfil
+    //     // Search
+    //     // Nombre
+    //     // Logout
+    // }else if(user.id==="Medico"){
+    //     // Appointments
+    //     // Profiler
+    //     // IngresarHorario
+    //     // Nombre
+    //     // Logout
+    // }else{
+    //     // Approve Doctors
+    //     // Logout
+    // }
   return (
       <header className="App-header">
         <div className="logo">
@@ -33,22 +86,6 @@ function Header() {
 
         <div className="nav-links">
 
-          {/*<a href="/presentation/medicos/appointment">Appointments</a>*/}
-          {/*<a href="/presentation/medicos/perfilMedico">Profile</a>*/}
-          {/*<a href="/presentation/horarios/showIngresoH">Ingresar Horario</a>*/}
-
-          {/*<a href="/presentation/pacientes/appointment">History</a>*/}
-          {/*<a href="/presentation/pacientes/perfilP">Perfil</a>*/}
-          {/*<a href="/presentation/usuarios/index/show">Search</a>*/}
-
-
-
-          {/*<a href="/presentation/admin/medicos">Approve Doctors</a>*/}
-
-
-
-          {/*<a href="/logout">Logout</a>*/}
-
           <p> <Link to="/admin">About</Link> </p>
           <p> <Link to="/history">Search</Link></p>
           <p> <Link to="/login">Login</Link></p>
@@ -59,6 +96,7 @@ function Header() {
 }
 
 function App() {
+    const[user, setUser]= useState({id:null, rol:'', name:''});
   return (
       <div className="App">
         <BrowserRouter>

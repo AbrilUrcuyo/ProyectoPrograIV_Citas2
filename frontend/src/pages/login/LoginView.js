@@ -11,12 +11,35 @@ function LoginView () {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const handleSubmit = (e) => {
+    // ...existing code...
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Here you can handle the login logic, for now, we just log the inputs
-        console.log('Username:', username);
-        console.log('Password:', password);
-        // Reset fields after submission
+        setError('');
+
+
+        try {
+            const response = await fetch('http://localhost:8080/usuarios/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: username,
+                    clave: password
+                })
+            });
+            if (!response.ok) {
+                setError('Usuario o contraseña incorrectos');
+                return;
+            }
+            const data = await response.json();
+            // Guarda el token en localStorage
+            localStorage.setItem('_token', data.token);
+            // Aquí puedes redirigir según el rol si lo deseas
+            // Por ejemplo: window.location.href = "/admin";
+        } catch (err) {
+            setError('Error de conexión con el servidor');
+        }
         setUsername('');
         setPassword('');
     };

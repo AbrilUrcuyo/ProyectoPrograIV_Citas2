@@ -23,6 +23,45 @@ function MedicosPendientes(){
         })();
     }
 
+    // ...existing code...
+
+    function handleAceptar(id) {
+        const request = new Request(`${backend}/admin/${id}/aprobar`, {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            }
+        });
+        (async () => {
+            const response = await fetch(request);
+            if (!response.ok) {
+                alert("Error: " + response.statusText + " No se pudo aceptar al medico");
+                return;
+            }
+            handleList(); // Refresca la lista
+        })();
+    }
+
+    function handleRechazar(id) {
+        const request = new Request(`${backend}/admin/${id}/rechazar`, {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            }
+        });
+        (async () => {
+            const response = await fetch(request);
+            if (!response.ok) {
+                alert("Error: " + response.statusText + " No se pudo rechazar al medico");
+                return;
+            }
+            handleList(); // Refresca la lista
+        })();
+    }
+
+
     return (
         <div className="container">
             <div className="LoginPage">
@@ -44,8 +83,8 @@ function MedicosPendientes(){
                             {medicos.map(medico => (
                                 <tr key={medico.id}>
                                     <td>{medico.id}</td>
-                                    <td> <button className="botonAceptar" type="submit">Aprobar</button>
-                                        <button className="botonRechazar" type="submit">Rechazar</button>
+                                    <td> <button className="botonAceptar" onClick={()=>handleAceptar(medico.id)}>Aprobar</button>
+                                        <button className="botonRechazar" onClick={()=>handleRechazar(medico.id)}>Rechazar</button>
                                     </td>
                                 </tr>
 
