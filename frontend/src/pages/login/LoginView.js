@@ -16,7 +16,6 @@ function LoginView () {
         e.preventDefault();
         setError('');
 
-
         try {
             const response = await fetch('http://localhost:8080/usuarios/login', {
                 method: 'POST',
