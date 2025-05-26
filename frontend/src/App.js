@@ -6,7 +6,8 @@ import {Link, BrowserRouter, Routes, Route, Router} from 'react-router-dom'
 import LoginView from './pages/login/LoginView';
 import RegisterView from './pages/login/RegisterView';
 import HistoryView from './pages/pacientes/History';
-
+import HorarioView from './pages/horarios/HorarioView';
+import HorarioExtendidoView from "./pages/horarios/HorarioExtendidoView";
 
 import telefono from './pages/images/telefono.png';
 import headerLogo from './pages/images/doctorHeader.jpg';
@@ -40,7 +41,7 @@ function Header({user, setUser}) {
 
     function getUser(token){
         try {
-            const parts =token.split(',');
+            const parts =token.split('.');
             if(parts.length !== 3){
                 throw new Error('Invalid JNT format');
             }
@@ -54,59 +55,80 @@ function Header({user, setUser}) {
         }
     }
 
-    // if(user.id===null){
-    //         // search= (<> <Link to="/register">Register </Link> <>/></>);
-    //         //     login= (<> <Link to="/login">Login </Link> <>/>);
-    // }else if(user.id==="Paciente"){
-    //     // History
-    //     // Perfil
-    //     // Search
-    //     // Nombre
-    //     // Logout
-    // }else if(user.id==="Medico"){
-    //     // Appointments
-    //     // Profiler
-    //     // IngresarHorario
-    //     // Nombre
-    //     // Logout
-    // }else{
-    //     // Approve Doctors
-    //     // Logout
-    // }
-  return (
-      <header className="App-header">
-        <div className="logo">
-          <img src={headerLogo} alt="doctorIMG"/>
-          <h1>Medical Appointments</h1>
-        </div>
+    function logout() {
+        localStorage.removeItem('_token');
+        setUser({ id: null, rol: '', name: '' });
+    }
 
-        <div className="phone">
-          <img src={telefono} alt="phone"/>
-          +506 5467 0937
-        </div>
+    let links;
 
-        <div className="nav-links">
+    if (!user.id) {
+        // Usuario no autenticado
+        links = (
+            <>
+                <p><Link to="/">Search</Link></p>
+                <p><Link to="/login">Login</Link></p>
+            </>
+        );
+    } else if (user.rol === "Paciente") {
+        links = (
+            <>
+                <p><Link to="/history">History</Link></p>
+                <p><Link to="/">Search</Link></p>
+                <p>{user.name}</p>
+                <p><button onClick={logout}>Logout</button></p>
+            </>
+        );
+    } else if (user.rol === "Medico") {
+        links = (
+            <>
+                <p><Link to="/HorarioView">Appointments</Link></p>
+                <p><Link to="/HorarioExtend">Profile</Link></p>
+                <p><Link to="/HorarioExtend">Ingresar Horario</Link></p>
+                <p>Dr. {user.name}</p>
+                <p><button onClick={logout}>Logout</button></p>
+            </>
+        );
+    } else if (user.rol === "Admin") {
+        links = (
+            <>
+                <p><Link to="/admin">Aprove doctor</Link></p>
+                <p>Admin: {user.name}</p>
+                <p><button onClick={logout}>Logout</button></p>
+            </>
+        );
+    }
+    return (
+        <header className="App-header">
+            <div className="logo">
+                <img src={headerLogo} alt="doctorIMG"/>
+                <h1>Medical Appointments</h1>
+            </div>
 
-          <p> <Link to="/admin">About</Link> </p>
-          <p> <Link to="/history">Search</Link></p>
-          <p> <Link to="/login">Login</Link></p>
-        </div>
-      </header>
+            <div className="phone">
+                <img src={telefono} alt="phone"/>
+                +506 5467 0937
+            </div>
 
-  );
+            <div className="nav-links">
+                {links}
+            </div>
+        </header>
+
+    );
 }
 
 function App() {
     const[user, setUser]= useState({id:null, rol:'', name:''});
-  return (
-      <div className="App">
-        <BrowserRouter>
-          <Header />
-          <Main />
-          <Footer />
-        </BrowserRouter>
-      </div>
-  );
+    return (
+        <div className="App">
+            <BrowserRouter>
+                <Header user={user} setUser={setUser}/>
+                <Main user={user} setUser={setUser} />
+                <Footer />
+            </BrowserRouter>
+        </div>
+    );
 }
 
 function Main() {
@@ -121,25 +143,43 @@ function Main() {
           <Route exact path="/history" element={<HistoryView />}/>
           <Route exact path="/admin" element={<AdminView />}/>
           <Route exact path="/citasMedico" element={<GestionCitas />}/>
+          <Route exact path="/HorarioView" element={<HorarioView/>}/>
+          <Route exact path="/HorarioExtend" element={<HorarioExtendidoView/>}/>
         </Routes>
       </div>
   );
 }
 function Footer() {
-  return (
-      <footer className="App-footer">
-        <div className="copyright">Total Soft Inc.</div>
-        <div className="social-icons">
+    return (
+        <footer className="App-footer">
+            <div className="copyright">Total Soft Inc.</div>
+            <div className="social-icons">
 
-          <img src={twitterImg} height="16" width="16" alt="twitter"/>
-          <img src={facebookImage} height="16" width="16" alt="facebook"/>
-          <img src={instaImage} height="16" width="16" alt="instagram"/>
-        </div>
-        <div className="copyright">©2019 Tsf, Inc.</div>
+                <img src={twitterImg} height="16" width="16" alt="twitter"/>
+                <img src={facebookImage} height="16" width="16" alt="facebook"/>
+                <img src={instaImage} height="16" width="16" alt="instagram"/>
+            </div>
+            <div className="copyright">©2019 Tsf, Inc.</div>
 
-      </footer>
-  );
+        </footer>
+    );
 }
-
+export function decodeToken(token) {
+    try {
+        const parts = token.split('.');
+        if (parts.length !== 3) {
+            throw new Error('Invalid JWT format');
+        }
+        const payloadEncoded = parts[1];
+        const payload = JSON.parse(atob(payloadEncoded));
+        return {
+            id: payload.id,
+            rol: payload.scope[0],
+            name: payload.name,
+        };
+    } catch (error) {
+        console.error('Error decoding JWT:', error);
+        return null;
+    }
+}
 export default App;
-
