@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './LoginView.css';
 
 import userImg from '../images/user.png';
 import cuentaImg from '../images/cuenta.png';
 import llaveImg from '../images/llave.png';
-import {Link} from "react-router-dom"; // corregido
+import {Link} from "react-router-dom";
+import {decodeToken} from "../../App";
+import {useState} from "react"; // corregido
 
-function LoginView () {
+function LoginView ({setUser}) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     // ...existing code...
     const handleSubmit = async (e) => {
@@ -35,6 +38,9 @@ function LoginView () {
             const data = await response.json();
             // Guarda el token en localStorage
             localStorage.setItem('_token', data.token);
+            const userData = decodeToken(data.token);
+            setUser(userData);
+            navigate('/');
             // Aquí puedes redirigir según el rol si lo deseas
             // Por ejemplo: window.location.href = "/admin";
         } catch (err) {
