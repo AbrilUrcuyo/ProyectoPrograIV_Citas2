@@ -19,6 +19,7 @@ import ConfirmView from "./pages/pacientes/ConfirmView";
 import BuscarCitas from "./pages/login/BuscarCitas";
 import AdminView from "./pages/admin/medicosPendientes";
 import PerfilMedicoView from "./pages/medicos/PerfilMedicoView";
+import GestionCitas from "./pages/medicos/GestionCitas";
 
 function Header({user, setUser}) {
     const[visible, setVisible] = useState(false);
@@ -130,22 +131,23 @@ function App() {
     );
 }
 
-function Main({user, setUser}) {
+function Main() {
 
-    return (
-        <div className="App-main">
-            <Routes>
-                <Route exact path="/" element={<BuscarCitas />}/>
-                <Route exact path="/login" element={<LoginView setUser={setUser} />}/>
-                <Route exact path="/register" element={<RegisterView />}/>
-                <Route exact path="/confirmView" element={<ConfirmView />}/>
-                <Route exact path="/history" element={<HistoryView />}/>
-                <Route exact path="/admin" element={<AdminView />}/>
-                <Route exact path="/HorarioView" element={<HorarioView/>}/>
-                <Route exact path="/HorarioExtend" element={<HorarioExtendidoView/>}/>
-            </Routes>
-        </div>
-    );
+  return (
+      <div className="App-main">
+        <Routes>
+          <Route exact path="/" element={<GestionCitas />}/>
+          <Route exact path="/login" element={<LoginView />}/>
+          <Route exact path="/register" element={<RegisterView />}/>
+          <Route exact path="/confirmView" element={<ConfirmView />}/>
+          <Route exact path="/history" element={<HistoryView />}/>
+          <Route exact path="/admin" element={<AdminView />}/>
+          <Route exact path="/citasMedico" element={<GestionCitas />}/>
+          <Route exact path="/HorarioView" element={<HorarioView/>}/>
+          <Route exact path="/HorarioExtend" element={<HorarioExtendidoView/>}/>
+        </Routes>
+      </div>
+  );
 }
 function Footer() {
     return (
