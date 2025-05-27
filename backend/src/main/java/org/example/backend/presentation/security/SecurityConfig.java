@@ -43,10 +43,7 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/usuarios/**","/").permitAll()
-                        .requestMatchers("/personas/").hasAnyAuthority("SCOPE_Medico")
-                        .requestMatchers("/").hasAuthority("SCOPE_Paciente")
-                        .requestMatchers("/admin/**").hasAuthority("SCOPE_Admin")
+                        .requestMatchers("/", "/usuarios/Register","/usuarios/login").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(configurer -> configurer.jwt(Customizer.withDefaults()))
                 .build();

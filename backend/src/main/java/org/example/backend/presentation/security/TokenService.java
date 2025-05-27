@@ -14,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Service
@@ -26,7 +27,7 @@ public class TokenService {
         var header = new JWSHeader.Builder(jwtConfig.getAlgorithm()).type(JOSEObjectType.JWT).build();
         Instant now = Instant.now();
         var builder = new JWTClaimsSet.Builder().issuer("TotalSoft").issueTime(Date.from(now))
-                .expirationTime(Date.from(now.plus(1, java.time.temporal.ChronoUnit.HOURS)));
+                .expirationTime(Date.from(now.plus(365, ChronoUnit.DAYS)));
         var scopes = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
         builder.claim("scope", scopes);
         var user = (Usuario) authentication.getPrincipal();
