@@ -1,534 +1,3 @@
-div.editPage{
-    display: flex;
-    width: 80%;
-    padding: 0;
-    flex-direction: column;
-    height: 70vh;
-    border-radius: 10px; /* Esquinas redondeadas */
-    background-color: white; /* Fondo blanco para que coincida */
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-    border: 1px solid #c1c1bd;
-}
-h1 {
-    margin-bottom: 30px; /* Ajusta según sea necesario */
-}
-.editText{
-    width: 15%;
-}
-.editConterner{
-    display: flex;
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center;
-    width: 100%;
-    flex-direction: row;
-}
-
-.editBlock{
-    display: flex;
-    width: 50%;
-    padding: 0;
-    flex-direction: column;
-    height: 70vh;
-    border-radius: 10px; /* Esquinas redondeadas */
-    background-color: white; /* Fondo blanco para que coincida */
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-    border: 1px solid #c1c1bd;
-}
-
-body{
-    background-color: #f5f5f5;
-}
-
-/*--------------------LOGIN------------------*/
-.login div{
-    padding: 10px;
-}
-div.LoginPage{
-    display: flex;
-    width: 30%;
-    padding: 0;
-    flex-direction: column;
-    height: 70vh;
-    border-radius: 10px; /* Esquinas redondeadas */
-    background-color: white; /* Fondo blanco para que coincida */
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-    border: 1px solid #c1c1bd;
-
-}
-div.LoginTitule{
-    Text-align: center;
-    font-size: 30px;
-    border-radius: 5px 5px 0 0; /* Solo arriba redondeado */
-    background-color: #f0f1f2;
-}
-
-.container{
-    display: flex;
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center;
-    width: 100%;
-}
-
-.container-index{
-    justify-content: center;
-    align-items: flex-start;
-    width: 100%;
-    margin-top: auto;
-    vertical-align: center;
-    height: 100vh;
-}
-.container-table {
-    margin-top: 30px; /* Ajusta según necesites */
-    display: flex;
-    flex-direction: column; /* Apila elementos verticalmente */
-    align-items: center; /* Centra horizontalmente */
-    padding: 30px;
-}
-
-
-div.LoginEnd{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    background-color:#f0f1f2;
-    border-radius: 0 0 5px 5px;
-}
-
-.container div{
-    height: 50%;
-}
-
-div.row{
-    display: flex;
-    flex-direction: row;
-}
-
-.userImg {
-    display: flex;
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center; /* Centra verticalmente */
-}
-
-.userImg img {
-    border-radius: 50%;
-    height: 80px; /* Ajusta el tamaño según sea necesario */
-    width: 80px;
-}
-
-.loginBlock {
-    border-radius: 0px;
-    background-color: #f8f8f8; /* Color de fondo más claro */
-    padding: 20px;
-    border: 1px solid #c1c1bd;
-}
-
-.icon {
-    background-color:#cfcfcb;
-    border-radius: 10%;
-}
-
-.Loginbutton button{
-    background-color:#17A2B8;
-    width: 100%;
-    height: 50px;
-    border-radius: 5px;
-    color:white;
-    font-size: 20px;
-    border: 1px solid;
-
-}
-
-.LogininputText {
-    flex: 1; /* Para que crezca y llene el espacio disponible */
-    display: flex;
-    align-items: center;
-    width: 80%; /* Que ocupe todo el ancho del contenedor */
-}
-
-.LogininputText input,
-.LogininputText select {
-    width: 100%; /* Ocupar todo el ancho disponible */
-    padding: 10px; /* Espaciado interno */
-    border: 1px solid #ccc; /* Borde del input */
-    border-radius: 5px; /* Bordes redondeados */
-    outline: none; /* Eliminar el borde azul al hacer clic */
-}
-.LoginEnd div:last-child {
-    border-radius: 5px;
-    border: 1px solid red;
-    color: red;
-}
-/*---------------REGISTER-------------------------*/
-
-.Register button{
-    background-color:red;
-    width: 100%;
-    height: 50px;
-    border-radius: 5px;
-    color:white;
-    font-size: 20px;
-    border: 1px solid;
-
-}
-
-/*---------------INDEX-----------------------------*/
-.container-confir-citas{
-    display: grid;
-    place-items: center;
-    margin: 0;
-}
-
-.confirmation-card {
-    text-align: center;
-    width: 100%;
-    max-width: 600px;
-    background: white;
-    padding: 30px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-    justify-content: center;
-
-    display: grid;
-    place-items: center; /* Centra tanto horizontal como verticalmente */
-    margin: 0;
-
-}
-.logo {
-    display: flex;
-    align-items: center;
-}
-
-.logo img {
-    width: 80px;
-    height: 80px;
-    margin-right: 10px;
-    border-radius: 50%;
-}
-
-.logo h1 {
-    color: #4db6ac;
-    font-size: 24px;
-    font-weight: normal;
-}
-
-.phone {
-    color: #888;
-    font-size: 18px;
-}
-
-.nav-links {
-    display: flex;
-    gap: 20px;
-}
-
-.nav-links a {
-    color: #888;
-    text-decoration: none;
-}
-
-.search-container {
-    background: white;
-    width: 80%;
-    max-width: 1200px;
-    margin: 30px auto;
-    border-radius: 5px;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.search-form {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.search-form input {
-    flex: 1;
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
-}
-
-.search-form button {
-    background-color: #2196f3;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 0 30px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.doctor-list {
-    width: 100%;
-}
-
-.doctor-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px;
-    border-bottom: 1px solid #eee;
-    background: white;
-    margin-bottom: 10px;
-}
-
-.doctor-info {
-    display: flex;
-    align-items: center;
-}
-
-.doctor-photo {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    margin: 0 auto 20px;
-    object-fit: cover;
-}
-.doctor-name {
-    font-size: 22px;
-    color: #555;
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.doctor-name img {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
-}
-.action-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
-}
-.cita-date {
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #d4a76a;
-    margin-bottom: 10px;
-}
-
-.cita-date img {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
-}
-
-.cita-location {
-    font-size: 18px;
-    color: #555;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.cita-location img {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
-}
-.confirmar-btn {
-    background-color: #e3f2fd;
-    color: #2196f3;
-    border: none;
-    border-radius: 20px;
-    padding: 8px 25px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.cancelar-btn {
-    background-color: #e3f2fd;
-    color: #2196f3;
-    border: none;
-    border-radius: 20px;
-    padding: 8px 25px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.doctor-details h3 {
-    font-size: 18px;
-    margin-bottom: 5px;
-}
-
-.doctor-details p {
-    color: #777;
-    font-size: 16px;
-}
-
-.doctor-code {
-    color: #2196f3;
-}
-
-.doctor-location {
-    color: #777;
-    margin-top: 15px;
-}
-
-.location-pin {
-    color: #f57c00;
-}
-
-.citas {
-    display: flex;
-    gap: 30px;
-}
-
-.cita-day {
-    text-align: center;
-}
-
-.cita-times {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.time-slot {
-    background-color: #e3f2fd;
-    border-radius: 20px;
-    padding: 5px 15px;
-    font-size: 14px;
-    color: #2196f3;
-}
-
-.schedule-btn {
-    background-color: #e3f2fd;
-    color: #2196f3;
-    border: none;
-    border-radius: 20px;
-    padding: 8px 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-footer {
-    background-color: #212121;
-    color: white;
-    padding: 15px 0;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    text-align: left;
-    padding-left: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.social-icons {
-    display: flex;
-    gap: 10px;
-    margin-right: 20px;
-    width: 60%;
-}
-
-.social-icon {
-    background-color: white;
-    color: #212121;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 5px;
-}
-
-.copyright {
-    margin-right: 20px;
-    font-size: 14px;
-    color: #aaa;
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-}
-
-header {
-    background-color: #e6f7ff;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 40px;
-    border-bottom: 1px solid #ddd;
-}
-
-/*-----------------------------------------Horario-Extendido-----------------------------------------*/
-
-.space-evenly{
-    justify-content: space-evenly;
-}
-
-.botones{
-    align-items: center;
-    gap: 4px;
-    background-color: #E8EFFB;
-    border: none;
-    border-radius: 12px;
-    padding: 5px 10px;
-    font-size: 14px;
-    font-weight: bold;
-    color: #1A73E8;
-    cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.botones:disabled{
-    background-color: #dadad6;
-}
-
-.lista-horas {
-    display: flex;
-    flex-direction: column;
-    gap: 5px; /* Espaciado entre burbujas */
-    list-style: none; /* Eliminar los puntos de la lista */
-    padding: 0;
-}
-
-div{
-    padding: 10px;
-}
-
-.anclado{
-    position: sticky;
-    bottom: 0;
-    left: 0;
-    justify-content: center;
-    text-align: center;
-    font-weight: bold;
-    background-color: #007bff; /* Color azul */
-    color: white; /* Texto en blanco */
-    border: none; /* Sin bordes */
-    padding: 10px 20px; /* Espaciado interno */
-    font-size: 16px; /* Tamaño del texto */
-    border-radius: 20px; /* Bordes redondeados */
-    cursor: pointer; /* Cambiar el cursor al pasar sobre el botón */
-    transition: background-color 0.3s ease; /* Efecto de transición */
-}
-.center{
-    display: flex;
-    justify-content: center;
-    justify-items: center;
-}
-
-/*-------History--------*/
-
-
 .main-content {
     padding: 20px;
 }
@@ -545,7 +14,13 @@ div{
     font-weight: normal;
 }
 
-/* Search Form */
+.warning {
+    border: 2px solid red;
+    color: red;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
 .search-form {
     display: flex;
     gap: 10px;
@@ -554,6 +29,7 @@ div{
 
 .search-group {
     display: flex;
+    flex-direction: column;
 }
 
 .search-label {
@@ -582,65 +58,6 @@ div{
     font-weight: bold;
 }
 
-/* Appointment Cards */
-.appointment {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid #eee;
-    padding: 15px 0;
-}
-
-.appointment img {
-    border-radius: 50%;
-    height: 50px;
-    width: 50px;
-    margin-right: 10px;
-}
-
-.doctor-name {
-    font-weight: bold;
-    color: #333;
-}
-
-.specialty {
-    color: #777;
-    font-size: 14px;
-}
-
-.date {
-    color: #ff9800;
-    font-size: large;
-    vertical-align: top;
-}
-
-.status {
-    padding: 10px 10px;
-    border-radius: 25px;
-    font-size: 14px;
-    font-weight: bold;
-    width: 120px; /* Ajusta según sea necesario */
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.pending {
-    background-color: yellow;
-}
-
-.attended {
-    background-color: green;
-    color: white;
-}
-
-.view {
-    text-decoration: none;
-    color: #1976d2;
-    font-size: 14px;
-}
-
 .appointments {
     margin-top: 20px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
@@ -656,10 +73,17 @@ div{
     border-bottom: 1px solid #ddd;
 }
 
-.patient-photo {
-    width: 50px;
-    height: 50px;
+.row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+}
+
+.patient-photo, .appointment img {
     border-radius: 50%;
+    height: 50px;
+    width: 50px;
     margin-right: 10px;
 }
 
@@ -668,7 +92,19 @@ div{
     width: 45%;
 }
 
-.status-pending {
+.status {
+    padding: 10px 10px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: bold;
+    width: 120px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pending, .status-pending {
     background-color: yellow;
     color: black;
     font-weight: bold;
@@ -676,12 +112,22 @@ div{
     border-radius: 15px;
 }
 
-.status-attended {
+.attended, .status-attended {
     background-color: green;
     color: white;
     font-weight: bold;
     padding: 5px 10px;
     border-radius: 15px;
+}
+
+.confirmed {
+    background-color: lawngreen;
+    color: white;
+}
+
+.canceled {
+    background-color: darkred;
+    color: white;
 }
 
 .attend-button {
@@ -711,34 +157,6 @@ div{
     margin: 10px;
 }
 
-.width30{
+.width30 {
     width: 30%;
-}
-
-.confirmed{
-    background-color: lawngreen;
-    color: white;
-}
-
-.canceled{
-    background-color: darkred;
-    color: white;
-}
-
-.warning{
-    border: 2px solid red;
-    color: red;
-}
-
-.table-horarios{
-    border-collapse: collapse;
-    width: auto; /* Permite que la tabla ajuste su ancho */
-    table-layout: auto;
-}
-
-.table-horarios th, td {
-    border: 5px;
-    padding: 10px;
-    text-align: left;
-    white-space: nowrap; /* Evita que el contenido se divida en varias líneas */
 }

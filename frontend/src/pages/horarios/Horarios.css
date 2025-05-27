@@ -10,7 +10,6 @@ div.editPage{
     width: 80%;
     padding: 0;
     flex-direction: column;
-    height: 70vh;
     border-radius: 10px; /* Esquinas redondeadas */
     background-color: white; /* Fondo blanco para que coincida */
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
@@ -18,18 +17,11 @@ div.editPage{
 }
 
 .container-Fer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
 }
 
-.row {
-  flex-direction: row;
-}
-
-.space-evenly{
-    justify-content: space-evenly;
-}
 
 .botones {
     display: flex;
@@ -53,17 +45,17 @@ div.editPage{
 }
 
 .userImg {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
 }
 
 .cita-date {
-  font-weight: bold;
-  margin-top: 16px;
-  margin-bottom: 8px;
-  color: #1976d2;
+    font-weight: bold;
+    margin-top: 16px;
+    margin-bottom: 8px;
+    color: #1976d2;
 }
 
 .lista-horas {
@@ -74,16 +66,6 @@ div.editPage{
     padding: 0;
 }
 
-.center {
-    display: flex;
-    justify-content: center;
-    margin-top: 24px;
-    justify-items: center;
-}
-
-div{
-    padding: 10px;
-}
 
 .anclado{
     position: sticky;

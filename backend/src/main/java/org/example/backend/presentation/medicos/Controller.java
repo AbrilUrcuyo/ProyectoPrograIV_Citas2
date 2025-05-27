@@ -27,7 +27,7 @@ public class Controller {
 
     public record CitaDto(Integer id, String nombrePaciente, LocalDate fecha, LocalTime hora, String estado) { }
     public record MedicoDto(String id, String nombre, String estadoAprob, List<CitaDto> citas) { }
-
+    public record MedicoDtoSinCita(String id, String nombre, String email, String especialidad, BigDecimal costo, String localidad, String descripcion, Integer frecuencia) { }
     @GetMapping("/{cedula}")
     public MedicoDto read(@PathVariable String cedula){
         try{
@@ -183,6 +183,22 @@ public class Controller {
             service.actualizarMedico(id,email,especialidad,costoConsulta,localidad,descripcion,frecuencia);
             return "redirect:/medicos/appointment";
         }
+    }
+
+
+    @GetMapping("/{id}/traer")
+    public MedicoDtoSinCita traer(Model model, @PathVariable("id") String id) {
+        Medico m = service.findMedicoById(id);
+        return new MedicoDtoSinCita(
+                m.getId(),
+                m.getNombre(),
+                m.getEmail(),
+                m.getEspecialidad(),
+                m.getCostoConsulta(),
+                m.getLocalidad(),
+                m.getDescripcion(),
+                m.getFrecCitas()
+        );
     }
 }
 
