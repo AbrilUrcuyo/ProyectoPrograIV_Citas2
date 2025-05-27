@@ -1,12 +1,13 @@
 import logo from './logo.svg';
 import './App.css';
-import {Link, BrowserRouter, Routes, Route, Router} from 'react-router-dom'
+import {Link, BrowserRouter, Routes, Route, Router, useNavigate} from 'react-router-dom'
 
 
 import LoginView from './pages/login/LoginView';
 import RegisterView from './pages/login/RegisterView';
 import HistoryView from './pages/pacientes/History';
-
+import HorarioView from './pages/horarios/HorariosView';
+import HorarioExtendidoView from "./pages/horarios/HorarioExtendidoView";
 
 import telefono from './pages/images/telefono.png';
 import headerLogo from './pages/images/doctorHeader.jpg';
@@ -23,77 +24,71 @@ import GestionCitas from "./pages/medicos/GestionCitas";
 function Header({user, setUser}) {
     const[visible, setVisible] = useState(false);
     const backend="http://localhost:8080";
+    const navigate = useNavigate();
 
-    function handleLogin(user){
-        let url = backend+'/usuarios/login';
-        const request = new Request(url,
-            {method: "POST",headers:{'Content-Type': 'application/json'}, body: JSON.stringify(user)});
-        (async ()=>{
-            const response = await fetch(request);
-            if(!response.ok){ alert("Error:"+response.status);return;}
-            const token = await response.text();
-            localStorage.setItem('_token', token);
-            setUser(getUser(token));
-            setVisible(true);
-        })();
+
+    function logout() {
+        localStorage.removeItem('_token');
+        setUser({ id: null, rol: '', name: '' });
+        navigate('/');
     }
 
-    function getUser(token){
-        try {
-            const parts =token.split(',');
-            if(parts.length !== 3){
-                throw new Error('Invalid JNT format');
-            }
-            const payloadEnconded= parts[1];
-            const payload= JSON.parse(atob(payloadEnconded));
-            return {id:payload.id, rol:payload.scope[0], name: payload.name};
+    let links;
 
-        }catch(error){
-            console.error('Error decoding JNT: ',error);
-            return null;
-        }
+    if (!user.id) {
+        // Usuario no autenticado
+        links = (
+            <>
+                <p><Link to="/">Search</Link></p>
+                <p><Link to="/login">Login</Link></p>
+            </>
+        );
+    } else if (user.rol === "Paciente") {
+        links = (
+            <>
+                <p><Link to="/history">History</Link></p>
+                <p><Link to="/">Search</Link></p>
+                <p>{user.name}</p>
+                <p><button onClick={logout}>Logout</button></p>
+            </>
+        );
+    } else if (user.rol === "Medico") {
+        links = (
+            <>
+                <p><Link to="/HorarioView">Appointments</Link></p>
+                <p><Link to="/PerfilMedico">Profile</Link></p>
+                <p><Link to="/HorarioExtend">Ingresar Horario</Link></p>
+                <p>{user.name}</p>
+                <p><button onClick={logout}>Logout</button></p>
+            </>
+        );
+    } else if (user.rol === "Administrador") {
+        links = (
+            <>
+                <p><Link to="/admin">Aprove doctor</Link></p>
+                <p>{user.name}</p>
+                <p><button onClick={logout}>Logout</button></p>
+            </>
+        );
     }
+    return (
+        <header className="App-header">
+            <div className="logo">
+                <img src={headerLogo} alt="doctorIMG"/>
+                <h1>Medical Appointments</h1>
+            </div>
 
-    // if(user.id===null){
-    //         // search= (<> <Link to="/register">Register </Link> <>/></>);
-    //         //     login= (<> <Link to="/login">Login </Link> <>/>);
-    // }else if(user.id==="Paciente"){
-    //     // History
-    //     // Perfil
-    //     // Search
-    //     // Nombre
-    //     // Logout
-    // }else if(user.id==="Medico"){
-    //     // Appointments
-    //     // Profiler
-    //     // IngresarHorario
-    //     // Nombre
-    //     // Logout
-    // }else{
-    //     // Approve Doctors
-    //     // Logout
-    // }
-  return (
-      <header className="App-header">
-        <div className="logo">
-          <img src={headerLogo} alt="doctorIMG"/>
-          <h1>Medical Appointments</h1>
-        </div>
+            <div className="phone">
+                <img src={telefono} alt="phone"/>
+                +506 5467 0937
+            </div>
 
-        <div className="phone">
-          <img src={telefono} alt="phone"/>
-          +506 5467 0937
-        </div>
+            <div className="nav-links">
+                {links}
+            </div>
+        </header>
 
-        <div className="nav-links">
-
-          <p> <Link to="/admin">About</Link> </p>
-          <p> <Link to="/history">Search</Link></p>
-          <p> <Link to="/login">Login</Link></p>
-        </div>
-      </header>
-
-  );
+    );
 }
 
 function App() {
@@ -101,26 +96,29 @@ function App() {
   return (
       <div className="App">
         <BrowserRouter>
-          <Header />
-          <Main />
-          <Footer />
+            <Header user={user} setUser={setUser}/>
+            <Main user={user} setUser={setUser} />
+            <Footer />
         </BrowserRouter>
       </div>
   );
 }
 
-function Main() {
+function Main({user, setUser})  {
 
   return (
       <div className="App-main">
         <Routes>
-          <Route exact path="/" element={<GestionCitas />}/>
-          <Route exact path="/login" element={<LoginView />}/>
+          <Route exact path="/" element={<BuscarCitas />}/>
+          <Route exact path="/login" element={<LoginView setUser={setUser}/>}/>
           <Route exact path="/register" element={<RegisterView />}/>
           <Route exact path="/confirmView" element={<ConfirmView />}/>
           <Route exact path="/history" element={<HistoryView />}/>
           <Route exact path="/admin" element={<AdminView />}/>
-          <Route exact path="/citasMedico" element={<GestionCitas />}/>
+          {/*<Route exact path="/citasMedico" element={<GestionCitas />}/>*/}
+            <Route exact path="/HorarioView" element={<HorarioView/>}/>
+            <Route exact path="/HorarioExtend" element={<HorarioExtendidoView/>}/>
+            <Route exact path="/PerfilMedico" element={<PerfilMedicoView user={user}/>}/>
         </Routes>
       </div>
   );
@@ -140,6 +138,23 @@ function Footer() {
       </footer>
   );
 }
-
+export function decodeToken(token) {
+    try {
+        const parts = token.split('.');
+        if (parts.length !== 3) {
+            throw new Error('Invalid JWT format');
+        }
+        const payloadEncoded = parts[1];
+        const payload = JSON.parse(atob(payloadEncoded));
+        return {
+            id: payload.id,
+            rol: payload.scope[0],
+            name: payload.name,
+        };
+    } catch (error) {
+        console.error('Error decoding JWT:', error);
+        return null;
+    }
+}
 export default App;
 

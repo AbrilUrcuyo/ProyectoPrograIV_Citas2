@@ -17,7 +17,7 @@ function HorarioExtendido({
                               onGoBack,
                           }) {
     return (
-        <div className="container">
+
             <div className="editPage">
                 <div className="container-Fer row space-evenly">
                     <div>
@@ -90,7 +90,7 @@ function HorarioExtendido({
                     </button>
                 </div>
             </div>
-        </div>
+
     );
 }
 

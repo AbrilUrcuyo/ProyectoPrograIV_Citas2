@@ -17,15 +17,6 @@ div.editPage{
     border: 1px solid #c1c1bd;
 }
 
-.container-Fer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-}
-
-.row {
-  flex-direction: row;
-}
 
 .space-evenly{
     justify-content: space-evenly;
@@ -79,27 +70,6 @@ div.editPage{
     justify-content: center;
     margin-top: 24px;
     justify-items: center;
-}
-
-div{
-    padding: 10px;
-}
-
-.anclado{
-    position: sticky;
-    bottom: 0;
-    left: 0;
-    justify-content: center;
-    text-align: center;
-    font-weight: bold;
-    background-color: #007bff; /* Color azul */
-    color: white; /* Texto en blanco */
-    border: none; /* Sin bordes */
-    padding: 10px 20px; /* Espaciado interno */
-    font-size: 16px; /* Tamaño del texto */
-    border-radius: 20px; /* Bordes redondeados */
-    cursor: pointer; /* Cambiar el cursor al pasar sobre el botón */
-    transition: background-color 0.3s ease; /* Efecto de transición */
 }
 
 /*-------History--------*/

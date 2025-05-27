@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react'
 import "./administrador.css";
+import {useNavigate} from "react-router-dom";
 
 function MedicosPendientes(){
     const [medicos, setMedicos] = useState([])
@@ -11,7 +12,8 @@ function MedicosPendientes(){
     }, [])
 
     function handleList(){
-        const request = new Request(backend+"/admin", {method: "GET", headers:{"Accept":"application/json","Content-Type":"application/json"}});
+        const request = new Request(backend+"/admin", {method: "GET",
+            headers:{'Authorization':'Bearer '+ localStorage.getItem('_token'),"Accept":"application/json","Content-Type":"application/json"}});
         (async ()=>{
             const response = await fetch(request);
             if(!response.ok){
@@ -29,6 +31,7 @@ function MedicosPendientes(){
         const request = new Request(`${backend}/admin/${id}/aprobar`, {
             method: "POST",
             headers: {
+                'Authorization':'Bearer '+ localStorage.getItem('_token'),
                 "Accept": "application/json",
                 "Content-Type": "application/json"
             }
@@ -47,6 +50,7 @@ function MedicosPendientes(){
         const request = new Request(`${backend}/admin/${id}/rechazar`, {
             method: "POST",
             headers: {
+                'Authorization':'Bearer '+ localStorage.getItem('_token'),
                 "Accept": "application/json",
                 "Content-Type": "application/json"
             }
