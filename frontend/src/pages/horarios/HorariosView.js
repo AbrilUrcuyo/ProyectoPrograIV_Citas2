@@ -51,71 +51,71 @@ function HorarioView() {
 
     return (
 
-            <div className="editPage">
-                <div className="LoginTitule">Horarios</div>
-                <div className="loginBlock">
-                    <div>
-                        <table>
-                            <thead>
-                            <tr>
-                                <th>Día de la semana</th>
-                                <th>Horario</th>
+        <div className="editPage">
+            <div className="LoginTitule">Horarios</div>
+            <div className="loginBlock">
+                <div>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Día de la semana</th>
+                            <th>Horario</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {horarios.map((horario, idx) => (
+                            <tr key={idx}>
+                                <td>{diasSemana[horario.diaSemana]}</td>
+                                <td>
+                                    {horario.horaInicio} - {horario.horaFin}
+                                </td>
                             </tr>
-                            </thead>
-                            <tbody>
-                            {horarios.map((horario, idx) => (
-                                <tr key={idx}>
-                                    <td>{diasSemana[horario.diaSemana]}</td>
-                                    <td>
-                                        {horario.horaInicio} - {horario.horaFin}
-                                    </td>
-                                </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                <form onSubmit={handleAgregar}>
+                    <p>Nuevo horario</p>
+                    <div className="row">
+                        <select
+                            name="dia"
+                            value={nuevoHorario.dia}
+                            onChange={handleChange}
+                        >
+                            {diasSemana.slice(1).map((dia, i) => (
+                                <option key={i + 1} value={i + 1}>
+                                    {dia}
+                                </option>
                             ))}
-                            </tbody>
-                        </table>
+                        </select>
+                        <input
+                            type="time"
+                            name="horaInicio"
+                            value={nuevoHorario.horaInicio}
+                            onChange={handleChange}
+                            required
+                        />
+                        <input
+                            type="time"
+                            name="horaFin"
+                            value={nuevoHorario.horaFin}
+                            onChange={handleChange}
+                            required
+                        />
                     </div>
-
-                    <form onSubmit={handleAgregar}>
-                        <p>Nuevo horario</p>
-                        <div className="row">
-                            <select
-                                name="dia"
-                                value={nuevoHorario.dia}
-                                onChange={handleChange}
-                            >
-                                {diasSemana.slice(1).map((dia, i) => (
-                                    <option key={i + 1} value={i + 1}>
-                                        {dia}
-                                    </option>
-                                ))}
-                            </select>
-                            <input
-                                type="time"
-                                name="horaInicio"
-                                value={nuevoHorario.horaInicio}
-                                onChange={handleChange}
-                                required
-                            />
-                            <input
-                                type="time"
-                                name="horaFin"
-                                value={nuevoHorario.horaFin}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                        <div className="Loginbutton">
-                            <button type="submit">Agregar horario</button>
-                        </div>
-                    </form>
-
                     <div className="Loginbutton">
-                        <button type="button" onClick={handleFinalizar}>
-                            Volver
-                        </button>
+                        <button type="submit">Agregar horario</button>
                     </div>
+                </form>
+
+                <div className="Loginbutton">
+                    <button type="button" onClick={handleFinalizar}>
+                        Volver
+                    </button>
                 </div>
             </div>
+        </div>
 
 
 
