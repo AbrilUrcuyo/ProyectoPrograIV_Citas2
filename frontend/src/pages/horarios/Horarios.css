@@ -10,18 +10,17 @@ div.editPage{
     width: 80%;
     padding: 0;
     flex-direction: column;
+    height: 70vh;
     border-radius: 10px; /* Esquinas redondeadas */
     background-color: white; /* Fondo blanco para que coincida */
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
     border: 1px solid #c1c1bd;
 }
 
-.container-Fer {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-}
 
+.space-evenly{
+    justify-content: space-evenly;
+}
 
 .botones {
     display: flex;
@@ -66,22 +65,11 @@ div.editPage{
     padding: 0;
 }
 
-
-.anclado{
-    position: sticky;
-    bottom: 0;
-    left: 0;
+.center {
+    display: flex;
     justify-content: center;
-    text-align: center;
-    font-weight: bold;
-    background-color: #007bff; /* Color azul */
-    color: white; /* Texto en blanco */
-    border: none; /* Sin bordes */
-    padding: 10px 20px; /* Espaciado interno */
-    font-size: 16px; /* Tamaño del texto */
-    border-radius: 20px; /* Bordes redondeados */
-    cursor: pointer; /* Cambiar el cursor al pasar sobre el botón */
-    transition: background-color 0.3s ease; /* Efecto de transición */
+    margin-top: 24px;
+    justify-items: center;
 }
 
 /*-------History--------*/

@@ -14,10 +14,12 @@ function LoginView ({setUser}) {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
+
     // ...existing code...
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+
 
         try {
             const response = await fetch('http://localhost:8080/usuarios/login', {
@@ -40,10 +42,10 @@ function LoginView ({setUser}) {
             const userData = decodeToken(data.token);
             setUser(userData);
             navigate('/');
-            // Aquí puedes redirigir según el rol si lo deseas
-            // Por ejemplo: window.location.href = "/admin";
+
+
         } catch (err) {
-            setError('Error de conexión con el servidor');
+            setError(err.message +'Error de conexión con el servidor');
         }
         setUsername('');
         setPassword('');
@@ -112,3 +114,4 @@ function LoginView ({setUser}) {
 };
 
 export default LoginView;
+
