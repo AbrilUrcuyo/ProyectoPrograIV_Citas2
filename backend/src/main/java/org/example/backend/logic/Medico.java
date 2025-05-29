@@ -1,8 +1,11 @@
 package org.example.backend.logic;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;
@@ -37,7 +40,7 @@ public class Medico {
 
     @NotNull
     @Column(name = "costo_consulta", nullable = false, precision = 10, scale = 2)
-    private BigDecimal costoConsulta;
+    private int costoConsulta;
 
     @Size(max = 20)
     @NotNull
@@ -58,9 +61,11 @@ public class Medico {
     private Integer frecCitas;
 
     @OneToMany(mappedBy = "idMedico")
+    @JsonIgnore
     private Set<Cita> citas = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "idMedico")
+    @JsonIgnore
     private Set<Horario> horarios = new LinkedHashSet<>();
 
     public String getId() {
@@ -103,11 +108,11 @@ public class Medico {
         this.especialidad = especialidad;
     }
 
-    public BigDecimal getCostoConsulta() {
+    public int getCostoConsulta() {
         return costoConsulta;
     }
 
-    public void setCostoConsulta(BigDecimal costoConsulta) {
+    public void setCostoConsulta(int costoConsulta) {
         this.costoConsulta = costoConsulta;
     }
 

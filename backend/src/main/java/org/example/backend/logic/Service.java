@@ -141,7 +141,7 @@ public class Service {
             medico.setNombre(nombre);
             medico.setEmail("");
             medico.setEspecialidad("");
-            medico.setCostoConsulta(BigDecimal.ZERO);
+            medico.setCostoConsulta(0);
             medico.setLocalidad("");
             medico.setDescripcion("");
             medico.setEstadoAprob("Pendiente");
@@ -203,7 +203,7 @@ public class Service {
     }
 
 
-    public void actualizarMedico(String id,String email,String especilidad, BigDecimal costo, String localidad, String descripcion, String frecuencia) {
+    public void actualizarMedico(String id,String email,String especilidad, int costo, String localidad, String descripcion, int frecuencia) {
         Medico medico = medicoRepository.findById(id).orElse(null);
         medico.setEmail(email);
         medico.setEspecialidad(especilidad);
@@ -212,8 +212,7 @@ public class Service {
         medico.setLocalidad(localidad);
         medico.setDescripcion(descripcion);
         medico.setEstadoAprob("Aprobado");
-        int frec = Integer.parseInt(frecuencia);
-        medico.setFrecCitas(frec);
+        medico.setFrecCitas(frecuencia);
         medicoRepository.save(medico);
     }
 
