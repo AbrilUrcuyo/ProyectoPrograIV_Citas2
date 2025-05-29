@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import "./BuscarCitas.css";
 // import userImg from '../images/user.png'; // Descomenta si tienes imágenes
 
@@ -41,18 +41,104 @@ const defaultFechaAct = "20-05-2025";
 
 // Modifica la función para usar los datos por defecto si no recibe props
 function BuscarCitas({
-    medicos = defaultMedicos,
-    citasPorMedico = defaultCitasPorMedico,
-    fechaAct = defaultFechaAct
-}) {
+                         fechaAct = defaultFechaAct
+                     }) {
+    const [medicos, setMedicos] = useState([]);
+    const [citasPorMedico, setCitasPorMedico] = useState({});
+    const backend="http://localhost:8080";
     const [especialidad, setEspecialidad] = useState("");
     const [localidad, setLocalidad] = useState("");
+
+
+    useEffect(()=>{
+        if(medicos.length === 0)
+            handleList();
+    }, [])
 
     const handleSubmit = (e) => {
         e.preventDefault();
         // Aquí deberías llamar a tu API o función de búsqueda
         // Ejemplo: buscarMedicos(especialidad, localidad)
     };
+
+    function adaptarDatosBackend(medicosBackend) {
+        const medicos = [];
+        const citasPorMedico = {};
+
+        medicosBackend.forEach(medico => {
+            // Adaptar datos básicos
+            medicos.push({
+                id: medico.id,
+                nombre: medico.nombre,
+                especialidad: medico.especialidad,
+                costoConsulta: `₡${medico.costoConsulta.toLocaleString()}`,
+                localidad: medico.localidad
+            });
+
+            // Adaptar horarios disponibles (simulación: agrupa por día de la semana)
+            // Aquí puedes adaptar según tu lógica real de fechas
+            if (medico.horarios && medico.horarios.length > 0) {
+                // Agrupa por día de la semana (ejemplo simple)
+                const horariosPorDia = {};
+                medico.horarios.forEach(horario => {
+                    // Suponiendo que tienes una función para obtener la próxima fecha de ese día de la semana
+                    const fecha = obtenerProximaFechaDeSemana(horario.diaSemana);
+                    if (!horariosPorDia[fecha]) horariosPorDia[fecha] = [];
+                    // Genera las horas disponibles (ejemplo: cada hora entre inicio y fin)
+                    const horas = generarHorasDisponibles(horario.horaInicio, horario.horaFin);
+                    horariosPorDia[fecha].push(...horas);
+                });
+                citasPorMedico[`${medico.id}H`] = Object.entries(horariosPorDia).map(([key, value]) => ({
+                    key, value
+                }));
+            } else {
+                citasPorMedico[`${medico.id}H`] = [];
+            }
+
+            // Adaptar citas ocupadas (simulación: vacío)
+            citasPorMedico[`${medico.id}O`] = {}; // Llena según tus datos reales
+        });
+
+        return { medicos, citasPorMedico };
+    }
+
+    // Función auxiliar para obtener la próxima fecha de un día de la semana (1=Lunes, 7=Domingo)
+    function obtenerProximaFechaDeSemana(diaSemana) {
+        const hoy = new Date();
+        const diaActual = hoy.getDay() === 0 ? 7 : hoy.getDay(); // JS: 0=Domingo
+        const diff = (diaSemana - diaActual + 7) % 7;
+        const fecha = new Date(hoy);
+        fecha.setDate(hoy.getDate() + diff);
+        return fecha.toLocaleDateString('es-CR'); // "dd/mm/yyyy"
+    }
+
+    // Genera horas disponibles entre inicio y fin (formato "HH:mm:ss")
+    function generarHorasDisponibles(horaInicio, horaFin) {
+        const [hIni, mIni] = horaInicio.split(':').map(Number);
+        const [hFin, mFin] = horaFin.split(':').map(Number);
+        const horas = [];
+        for (let h = hIni; h < hFin; h++) {
+            horas.push(`${h.toString().padStart(2, '0')}:00`);
+        }
+        return horas;
+    }
+
+    // Modifica handleList para usar la adaptación:
+    function handleList(){
+        const request = new Request(backend+"/", {method: "GET",
+            headers:{"Accept":"application/json","Content-Type":"application/json"}});
+        (async ()=>{
+            const response = await fetch(request);
+            if(!response.ok){
+                alert("Error: "+ response.statusText);
+                return;
+            }
+            const medicosBackend = await response.json();
+            const { medicos, citasPorMedico } = adaptarDatosBackend(medicosBackend);
+            setMedicos(medicos);
+            setCitasPorMedico(citasPorMedico);
+        })();
+    }
 
     return (
         <div className="search-container">
@@ -84,7 +170,7 @@ function BuscarCitas({
                                 <div className="doctor-card">
                                     <div>
                                         <div className="doctor-info">
-                                            <img src="#" alt="Doctor" className="doctor-photo" />
+                                            <img src={`C:/AAA/images/${medico.id}.jpg`} alt="Doctor" className="doctor-photo" />
                                             <div className="doctor-details">
                                                 <h3>
                                                     <span>{medico.nombre}</span>
@@ -113,8 +199,8 @@ function BuscarCitas({
                                                                     <button
                                                                         disabled={
                                                                             (citasPorMedico[`${medico.id}O`] &&
-                                                                            citasPorMedico[`${medico.id}O`][listaH.key] &&
-                                                                            citasPorMedico[`${medico.id}O`][listaH.key].includes(hora))
+                                                                                citasPorMedico[`${medico.id}O`][listaH.key] &&
+                                                                                citasPorMedico[`${medico.id}O`][listaH.key].includes(hora))
                                                                         }
                                                                         className="botones"
                                                                     >

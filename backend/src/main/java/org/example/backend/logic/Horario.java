@@ -1,5 +1,6 @@
 package org.example.backend.logic;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -16,6 +17,7 @@ public class Horario {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_medico", nullable = false)
+    @JsonIgnore
     private Medico idMedico;
 
     @Column(name = "dia_semana")

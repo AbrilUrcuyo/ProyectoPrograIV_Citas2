@@ -5,7 +5,10 @@ import jakarta.servlet.http.HttpSession;
 import org.example.backend.logic.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -27,7 +30,7 @@ public class Controller {
 
     public record CitaDto(Integer id, String nombrePaciente, LocalDate fecha, LocalTime hora, String estado) { }
     public record MedicoDto(String id, String nombre, String estadoAprob, List<CitaDto> citas) { }
-    public record MedicoDtoSinCita(String id, String nombre, String email, String especialidad, BigDecimal costo, String localidad, String descripcion, Integer frecuencia) { }
+    public record MedicoDtoSinCita(String id, String nombre, String email, String especialidad, int costoConsulta, String localidad, String descripcion, int frecuencia) { }
     @GetMapping("/{cedula}")
     public MedicoDto read(@PathVariable String cedula){
         try{
@@ -168,27 +171,27 @@ public class Controller {
     }
 
     @PostMapping("/actualizarMedico")
-    public String actualizarMedico(Model model,@AuthenticationPrincipal(expression = "usuario") Usuario usuario,
-                                   @RequestParam("email") String email, @RequestParam("especialidad") String especialidad,
-                                   @RequestParam("costoConsulta") String costo, @RequestParam("localidad") String localidad,
-                                   @RequestParam("descripcion") String descripcion, @RequestParam("frecCitas") String frecuencia ) {
-        String id = usuario.getId();
-        BigDecimal costoConsulta = new BigDecimal(costo);
-        if (costoConsulta.compareTo(BigDecimal.ZERO) < 0) {
-            Medico m = service.findMedicoById(id);
-            model.addAttribute("medico", m);
-            model.addAttribute("error", "El costo debe ser positivo");
-            return "/presentation/medicos/perfilMedico";
+    public ResponseEntity<?> actualizarMedico(@AuthenticationPrincipal Jwt jwt, @RequestBody MedicoDtoSinCita m) {
+        String id = (String) jwt.getClaims().get("id");
+
+        System.out.println(id + m.email() + m.especialidad() + m.costoConsulta()+
+                m.localidad()+ m.descripcion() + m.frecuencia());
+
+        if (m.costoConsulta() < 0) {
+            return ResponseEntity.badRequest().body("El costo debe ser positivo");
         }else {
-            service.actualizarMedico(id,email,especialidad,costoConsulta,localidad,descripcion,frecuencia);
-            return "redirect:/medicos/appointment";
+            service.actualizarMedico(id, m.email(), m.especialidad(), m.costoConsulta(),
+                    m.localidad(), m.descripcion(), m.frecuencia());
+            return ResponseEntity.ok().build();
         }
     }
 
 
-    @GetMapping("/{id}/traer")
-    public MedicoDtoSinCita traer(Model model, @PathVariable("id") String id) {
+    @GetMapping("/perfil")
+    public MedicoDtoSinCita traerDatos(@AuthenticationPrincipal Jwt jwt) {
+        String id = (String) jwt.getClaims().get("id");
         Medico m = service.findMedicoById(id);
+
         return new MedicoDtoSinCita(
                 m.getId(),
                 m.getNombre(),
