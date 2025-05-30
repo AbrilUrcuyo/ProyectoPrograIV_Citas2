@@ -14,7 +14,7 @@ import headerLogo from './pages/images/doctorHeader.jpg';
 import instaImage from './pages/images/instagram.png';
 import facebookImage from './pages/images/facebook.png';
 import twitterImg from './pages/images/logotipo-de-twitter.png';
-import React, {Profiler, useState} from "react";
+import React, {Profiler, useState, useEffect} from "react";
 import ConfirmView from "./pages/pacientes/ConfirmView";
 import BuscarCitas from "./pages/login/BuscarCitas";
 import AdminView from "./pages/admin/medicosPendientes";
@@ -55,9 +55,9 @@ function Header({user, setUser}) {
     } else if (user.rol === "Medico") {
         links = (
             <>
-                <p><Link to="/HorarioView">Appointments</Link></p>
+                <p><Link to="/HorarioView">Ingresar Horario</Link></p>
+                <p><Link to="/citasMedico">Appointments</Link></p>
                 <p><Link to="/PerfilMedico">Profile</Link></p>
-                <p><Link to="/HorarioExtend">Ingresar Horario</Link></p>
                 <p>{user.name}</p>
                 <p><button onClick={logout}>Logout</button></p>
             </>
@@ -93,6 +93,17 @@ function Header({user, setUser}) {
 
 function App() {
     const[user, setUser]= useState({id:null, rol:'', name:''});
+
+    useEffect( ()=> {
+           const token = localStorage.getItem('_token');
+            if(token){
+                const userData = decodeToken(token);
+                setUser(userData);
+            }
+    }, []);
+
+    
+
     return (
         <div className="App">
             <BrowserRouter>
@@ -115,7 +126,7 @@ function Main({user, setUser})  {
                 <Route exact path="/confirmView" element={<ConfirmView />}/>
                 <Route exact path="/history" element={<HistoryView />}/>
                 <Route exact path="/admin" element={<AdminView />}/>
-                {/*<Route exact path="/citasMedico" element={<GestionCitas />}/>*/}
+                <Route exact path="/citasMedico" element={<GestionCitas />}/>
                 <Route exact path="/HorarioView" element={<HorarioView/>}/>
                 <Route exact path="/HorarioExtend" element={<HorarioExtendidoView/>}/>
                 <Route exact path="/PerfilMedico" element={<PerfilMedicoView user={user}/>}/>

@@ -19,23 +19,23 @@ public class Controller {
     @Autowired
     private Service service;
 
-    public record CitaDto(Integer id, LocalDate fecha, LocalTime hora, String estado, String anotaciones) { }
+//    public record CitaDto(Integer id, LocalDate fecha, LocalTime hora, String estado, String anotaciones) { }
     public record HorarioDTO(Integer id, Integer diaSemana, LocalTime horaInicio, LocalTime horaFin){}
-    public record MedicoDto(String id, String nombre, String especialidad,int costoConsulta,String localidad, List<CitaDto> citas, List<HorarioDTO> horarios) { }
+    public record MedicoDto(String id, String nombre, String especialidad,int costoConsulta,String localidad, List<HorarioDTO> horarios) { }
     @GetMapping
     public List<MedicoDto> index() {
         List<Medico> medicos = service.medicosAceptados();
 
         return medicos.stream().map(medico -> {
-            List<CitaDto> citasDto = medico.getCitas().stream()
-                    .map(cita -> new CitaDto(
-                            cita.getId(),
-                            cita.getFecha(),
-                            cita.getHora(),
-                            cita.getEstado(),
-                            cita.getAnotaciones()
-                    ))
-                    .toList();
+//            List<CitaDto> citasDto = medico.getCitas().stream()
+//                    .map(cita -> new CitaDto(
+//                            cita.getId(),
+//                            cita.getFecha(),
+//                            cita.getHora(),
+//                            cita.getEstado(),
+//                            cita.getAnotaciones()
+//                    ))
+//                    .toList();
 
             List<HorarioDTO> horariosDto = medico.getHorarios().stream()
                     .map(h -> new HorarioDTO(
@@ -52,7 +52,6 @@ public class Controller {
                     medico.getEspecialidad(),
                     medico.getCostoConsulta(),
                     medico.getLocalidad(),
-                    citasDto,
                     horariosDto
             );
         }).toList();

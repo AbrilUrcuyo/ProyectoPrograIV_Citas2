@@ -1,23 +1,30 @@
 import React, { useState, useEffect } from "react";
 import './GestionCitas.css'
+import {useNavigate} from "react-router-dom";
+import AnotacionModal from "./EditarAnotacion";
 const estados = ["Todas", "Pendiente", "Confirmada", "Completada", "Cancelada"];
 
-function GestionCitas({ onBuscar }) {
+function GestionCitas() {
     // Estados locales para filtros
     const [filterE, setFilterE] = useState("Todas");
     const [filterP, setFilterP] = useState("");
     const [medico, setMedico]  = useState({});
     const [citas, setCitas]  = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const [citaSeleccionada, setCitaSeleccionada] = useState(null);
+    const [anotacion, setAnotacion] = useState("");
+    const navigate = useNavigate();
 
     const backend = "http://localhost:8080";
+    const token = localStorage.getItem('_token');
 
     useEffect( ()=> {
         handleMedico();
+        handleSearch();
     }, []);
 
     function handleMedico(){
-        const token = localStorage.getItem('_token');
-        const request = new Request(backend + '/medicos/M001', {
+        const request = new Request(backend + '/medicos/citas', {
             method: 'GET',
             headers: {
             'Authorization': `Bearer ${token}`
@@ -33,10 +40,105 @@ function GestionCitas({ onBuscar }) {
     }
 
     // Manejo de búsqueda
-    const handleSubmit = (e) => {
+    const handleSearch = (e) => {
+        if (e) e.preventDefault();
+        const request = new Request(backend + '/medicos/citas/buscar', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                estado: filterE,
+                paciente: filterP
+            })
+        });
+        (async () => {
+            const response = await fetch(request);
+            if (!response.ok) { alert("Error: " + response.status); return; }
+            const citasD = await response.json();
+            setCitas(citasD || []);
+        })();
+    }
+
+    function handleConfirm(citaId) {
+        const request = new Request(backend+'/citas/confirmar/'+citaId, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        (async () => {
+            const response = await fetch(request);
+            if (!response.ok) {
+                alert("Error: " + response.status);
+                return;
+            }
+            handleSearch();
+        })();
+    }
+
+    function handleCancel(citaId) {
+        const request = new Request(backend+'/citas/cancelar/'+citaId, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        (async () => {
+            const response = await fetch(request);
+            if (!response.ok) {
+                alert("Error: " + response.status);
+                return;
+            }
+            handleSearch();
+        })();
+    }
+
+    function handleComplete(citaId) {
+        const request = new Request(backend+'/citas/completar/'+citaId, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        (async () => {
+            const response = await fetch(request);
+            if (!response.ok) {
+                alert("Error: " + response.status);
+                return;
+            }
+            handleSearch();
+        })();
+    }
+
+    // Función para abrir el modal y cargar la anotación
+    async function handleView(cita) {
+        // Aquí podrías hacer un fetch para obtener la anotación si no viene en el objeto cita
+        // Por simplicidad, asumimos que cita.anotaciones ya existe
+        setCitaSeleccionada(cita);
+        setAnotacion(cita.anotaciones || "");
+        setShowModal(true);
+    }
+
+    // Función para guardar la anotación
+    async function handleGuardarAnotacion(e) {
         e.preventDefault();
-        if (onBuscar) onBuscar({ estado: filterE, paciente: filterP });
-    };
+        // Aquí haces el fetch para guardar la anotación
+        await fetch(`${backend}/citas/guardarAnotacion`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                citaId: citaSeleccionada.id,
+                anotacion: anotacion
+            })
+        });
+        setShowModal(false);
+        handleSearch(); // refresca la lista
+    }
 
     // Función para obtener la clase de estado
     const getEstadoClass = (estado) => {
@@ -63,7 +165,7 @@ function GestionCitas({ onBuscar }) {
                 <div className="warning">Medico no aprobado aún</div>
             )}
 
-            <form className="search-form" onSubmit={handleSubmit}>
+            <form className="search-form" onSubmit={handleSearch}>
                 <div className="search-group">
                     <label htmlFor="status" className="search-label">Estado</label>
                     <select
@@ -113,28 +215,34 @@ function GestionCitas({ onBuscar }) {
                         <div className="appointment-actions row width30">
                             {cita.estado === "Pendiente" && (
                                 <>
-                                    <a href={`/presentation/citas/confirmar/${medico.id}/${cita.id}`}>
-                                        <button className="attend-button">✔ Attend</button>
-                                    </a>
-                                    <a href={`/presentation/citas/cancelar/${medico.id}/${cita.id}`}>
-                                        <button className="cancel-button">✖ Cancel</button>
-                                    </a>
+                                    <button className="attend-button" onClick={() => handleConfirm(cita.id)}>✔ Attend
+                                    </button>
+                                    <button className="cancel-button" onClick={() => handleCancel(cita.id)}>✖ Cancel</button>
                                 </>
                             )}
                             {cita.estado === "Confirmada" && (
-                                <a href={`/presentation/citas/completar/${medico.id}/${cita.id}`}>
-                                    <button className="attend-button">Completar</button>
-                                </a>
+                                <button className="attend-button" onClick={() => handleComplete(cita.id)}>Completar</button>
                             )}
                             {cita.estado === "Completada" && (
-                                <a href={`/presentation/citas/anotar/${cita.id}`}>
-                                    <button className="view-button">🔍 View</button>
-                                </a>
+                                <button
+                                    className="view-button"
+                                    onClick={() => handleView(cita)}
+                                    type="button"
+                                >🔍 View</button>
                             )}
                         </div>
                     </div>
                 ))}
             </div>
+
+            <AnotacionModal
+                show={showModal}
+                onClose={() => setShowModal(false)}
+                cita={citaSeleccionada}
+                anotacion={anotacion}
+                setAnotacion={setAnotacion}
+                onGuardar={handleGuardarAnotacion}
+            />
         </div>
     );
 }

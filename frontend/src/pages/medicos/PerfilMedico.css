@@ -1,0 +1,105 @@
+div.editPage{
+    display: flex;
+    width: 80%;
+    padding: 0;
+    flex-direction: column;
+    height: 70vh;
+    border-radius: 10px; /* Esquinas redondeadas */
+    background-color: white; /* Fondo blanco para que coincida */
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    border: 1px solid #c1c1bd;
+}
+
+.editText{
+    width: 15%;
+}
+
+div.LoginTitule{
+    Text-align: center;
+    font-size: 30px;
+    border-radius: 5px 5px 0 0; /* Solo arriba redondeado */
+    background-color: #f0f1f2;
+}
+
+.container{
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center;
+    width: 100%;
+}
+
+.container-index{
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    margin-top: auto;
+    vertical-align: center;
+    height: 100vh;
+}
+.container-table {
+    margin-top: 30px; /* Ajusta según necesites */
+    display: flex;
+    flex-direction: column; /* Apila elementos verticalmente */
+    align-items: center; /* Centra horizontalmente */
+    padding: 30px;
+}
+
+.container div{
+    height: 50%;
+}
+
+div.row{
+    display: flex;
+    flex-direction: row;
+}
+
+.userImg {
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+}
+
+.userImg img {
+    border-radius: 50%;
+    height: 80px; /* Ajusta el tamaño según sea necesario */
+    width: 80px;
+}
+
+.loginBlock {
+    border-radius: 0px;
+    background-color: #f8f8f8; /* Color de fondo más claro */
+    padding: 20px;
+    border: 1px solid #c1c1bd;
+}
+
+.Loginbutton button{
+    background-color:#17A2B8;
+    width: 100%;
+    height: 50px;
+    border-radius: 5px;
+    color:white;
+    font-size: 20px;
+    border: 1px solid;
+
+}
+
+.LogininputText {
+    flex: 1; /* Para que crezca y llene el espacio disponible */
+    display: flex;
+    align-items: center;
+    width: 80%; /* Que ocupe todo el ancho del contenedor */
+}
+
+.LogininputText input,
+.LogininputText select {
+    width: 100%; /* Ocupar todo el ancho disponible */
+    padding: 10px; /* Espaciado interno */
+    border: 1px solid #ccc; /* Borde del input */
+    border-radius: 5px; /* Bordes redondeados */
+    outline: none; /* Eliminar el borde azul al hacer clic */
+}
+
+.warning{
+    border: 2px solid red;
+    color: red;
+}
