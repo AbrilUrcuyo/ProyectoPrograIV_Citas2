@@ -1,6 +1,9 @@
 package org.example.backend.logic;
  import org.example.backend.data.*;
  import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.security.core.Authentication;
+ import org.springframework.security.core.context.SecurityContextHolder;
+ import org.springframework.security.oauth2.jwt.Jwt;
 
  import java.math.BigDecimal;
  import java.time.LocalDate;
@@ -25,6 +28,11 @@ public class Service {
      @Autowired
      private HorarioRepository horarioRepository;
 
+
+     public String getUserId(){
+         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+         return (String) ((Jwt) authentication.getPrincipal()).getClaims().get("id");
+     }
 
      public Iterable<Cita> findAllCitas() {
          return citaRepository.findAll();

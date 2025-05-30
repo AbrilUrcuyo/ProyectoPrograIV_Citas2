@@ -21,18 +21,22 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@RestController
+@RestController("medicosController")
 @RequestMapping("/medicos")
 public class Controller {
 
     @Autowired
     private Service service;
 
-    public record CitaDto(Integer id, String nombrePaciente, LocalDate fecha, LocalTime hora, String estado) { }
+    public record CitaDto(Integer id, String nombrePaciente, LocalDate fecha, LocalTime hora, String estado, String anotaciones) { }
     public record MedicoDto(String id, String nombre, String estadoAprob, List<CitaDto> citas) { }
     public record MedicoDtoSinCita(String id, String nombre, String email, String especialidad, int costoConsulta, String localidad, String descripcion, int frecuencia) { }
-    @GetMapping("/{cedula}")
-    public MedicoDto read(@PathVariable String cedula){
+    public record BuscarCitasRequest(String estado, String paciente) {}
+
+    @GetMapping("/citas")
+    public MedicoDto read(){
+        String cedula = service.getUserId();
+
         try{
             Medico med = service.findMedicoById(cedula);
 
@@ -44,8 +48,16 @@ public class Controller {
                             cita.getIdPaciente().getNombre(),
                             cita.getFecha(),
                             cita.getHora(),
-                            cita.getEstado()
+                            cita.getEstado(),
+                            cita.getAnotaciones()
                     ))
+                    .sorted((c1, c2) -> {
+                        int compareFecha = c2.fecha().compareTo(c1.fecha());
+                        if (compareFecha == 0) {
+                            return c2.hora().compareTo(c1.hora());
+                        }
+                        return compareFecha;
+                    })
                     .collect(Collectors.toList());
 
             return new MedicoDto(med.getId(), med.getNombre(), med.getEstadoAprob(), citasDTO);
@@ -102,50 +114,39 @@ public class Controller {
         return "/medicos/appointment";
     }
 
-    @PostMapping("/appointment/buscar")
-    public String search(Model model,  @AuthenticationPrincipal(expression = "usuario") Usuario usuario,
-                         @RequestParam("estado") String estado,
-                         @RequestParam("paciente") String paciente,
-                         HttpSession session) {
+    @PostMapping("/citas/buscar")
+    public List<CitaDto> search(@RequestBody BuscarCitasRequest request) {
+        String estado = request.estado();
+        String paciente = request.paciente();
 
-        String id = usuario.getId();
-        Medico m = service.findMedicoById(id);
-        model.addAttribute("medico", m);
+        String id = service.getUserId();
+        Medico med = service.findMedicoById(id);
 
-        Set<Cita> citasM = m.getCitas();
-        List<Cita> citas = citasM.stream()
-                .sorted((c1, c2) -> {
-                    int compareFecha = c2.getFecha().compareTo(c1.getFecha());
-                    if (compareFecha == 0) {
-                        return c2.getHora().compareTo(c1.getHora());
-                    }
-                    return compareFecha;
-                })
-                .collect(Collectors.toList());
-
-
-        if(!Objects.equals(estado, "Todas")){
-            String finalEstado = estado;
-            citas.removeIf(cita -> !cita.getEstado().equals(finalEstado));
-        }else{
-            estado = "Todas";
-        }
-        model.addAttribute("filterE", estado);
-        session.setAttribute("estado", estado);
-
-        if(!Objects.equals(paciente, "")){
-            String finalPaciente = paciente;
-            citas.removeIf(cita -> !cita.getIdPaciente().getNombre().contains(finalPaciente));
-        }else{
-            paciente = "";
-        }
-        model.addAttribute("filterP", paciente);
-        session.setAttribute("paciente", paciente);
+        List<CitaDto> citasM = med.getCitas().stream()
+            .map(cita -> new CitaDto(
+                cita.getId(),
+                cita.getIdPaciente().getNombre(),
+                cita.getFecha(),
+                cita.getHora(),
+                cita.getEstado(),
+                cita.getAnotaciones()
+            ))
+            .sorted((c1, c2) -> {
+                int compareFecha = c2.fecha().compareTo(c1.fecha());
+                if (compareFecha == 0) {
+                return c2.hora().compareTo(c1.hora());
+                }
+                return compareFecha;
+            })
+            .toList();
 
 
-        model.addAttribute("citas", citas);
+        List<CitaDto> citas = citasM.stream()
+            .filter(cita -> (Objects.equals(estado, "Todas") || cita.estado().equals(estado)) &&
+                    (paciente == null || paciente.isEmpty() || cita.nombrePaciente().contains(paciente)))
+            .toList();
 
-        return "/medicos/appointment";
+        return citas;
     }
 
     @GetMapping("/ingresoMedicos")
