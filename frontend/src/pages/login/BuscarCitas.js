@@ -1,53 +1,25 @@
 import React, {useEffect, useState} from "react";
+import { useNavigate } from "react-router-dom";
+
 import "./BuscarCitas.css";
+import ViewCitaConfirmacion  from "../pacientes/ConfirmView";
 // import userImg from '../images/user.png'; // Descomenta si tienes imágenes
 
-// Datos de ejemplo por defecto
-const defaultMedicos = [
-    {
-        id: 1,
-        nombre: "Dra. Ana Pérez",
-        especialidad: "Cardiología",
-        localidad: "San José",
-        costoConsulta: "₡35,000"
-    },
-    {
-        id: 2,
-        nombre: "Dr. Luis Gómez",
-        especialidad: "Dermatología",
-        localidad: "Heredia",
-        costoConsulta: "₡30,000"
-    }
-];
-
-const defaultCitasPorMedico = {
-    "1H": [
-        { key: "20/05/2025", value: ["08:00", "09:00", "10:00"] },
-        { key: "21/05/2025", value: ["11:00", "12:00"] }
-    ],
-    "1O": {
-        "20/05/2025": ["09:00"], // 09:00 está ocupada
-        "21/05/2025": []
-    },
-    "2H": [
-        { key: "20/05/2025", value: ["13:00", "14:00"] }
-    ],
-    "2O": {
-        "20/05/2025": []
-    }
-};
-
-const defaultFechaAct = "20-05-2025";
 
 // Modifica la función para usar los datos por defecto si no recibe props
 function BuscarCitas({
-                         fechaAct = defaultFechaAct
+
                      }) {
     const [medicos, setMedicos] = useState([]);
     const [citasPorMedico, setCitasPorMedico] = useState({});
     const backend="http://localhost:8080";
     const [especialidad, setEspecialidad] = useState("");
     const [localidad, setLocalidad] = useState("");
+    const navigate = useNavigate();
+    const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+    const [datosCitaSeleccionada, setDatosCitaSeleccionada] = useState(null);
+
+
 
 
     useEffect(()=>{
@@ -140,6 +112,12 @@ function BuscarCitas({
         })();
     }
 
+    function formatearFechaISO(fecha) {
+        const [dia, mes, anio] = fecha.split("/");
+        return `${anio}-${mes.padStart(2, "0")}-${dia.padStart(2, "0")}`;
+    }
+
+
     return (
         <div className="search-container">
             <div className="search-form">
@@ -165,12 +143,14 @@ function BuscarCitas({
             <div className="doctor-list">
                 {medicos.length > 0 ? (
                     <ul>
-                        {medicos.map(medico => (
+                        {medicos.map((medico) => (
                             <li key={medico.id}>
                                 <div className="doctor-card">
                                     <div>
                                         <div className="doctor-info">
-                                            <img src={`C:/AAA/images/${medico.id}.jpg`} alt="Doctor" className="doctor-photo" />
+                                            {/* Si usas imágenes locales, reemplaza por una ruta accesible o descomenta import userImg */}
+                                            <img src={/*userImg ||*/ `/ruta/por/defecto.jpg`} alt="Doctor"
+                                                 className="doctor-photo"/>
                                             <div className="doctor-details">
                                                 <h3>
                                                     <span>{medico.nombre}</span>
@@ -186,27 +166,37 @@ function BuscarCitas({
                                         </div>
                                     </div>
 
-                                    {/* Horarios disponibles */}
-                                    {(citasPorMedico[`${medico.id}H`] || []).map(listaH => (
+
+                                    {(citasPorMedico[`${medico.id}H`] || []).map((listaH) => (
                                         <div className="citas" key={listaH.key}>
                                             <div className="cita-day">
                                                 <div className="cita-date">{listaH.key}</div>
                                                 <div className="cita-times">
                                                     <ul className="lista-horas">
-                                                        {listaH.value.map(hora => (
+                                                        {listaH.value.map((hora) => (
                                                             <li key={hora}>
-                                                                <a href={`/presentation/pacientes/book/${medico.id}/${listaH.key.replace(/\//g, "-")}/${hora}`}>
-                                                                    <button
-                                                                        disabled={
-                                                                            (citasPorMedico[`${medico.id}O`] &&
-                                                                                citasPorMedico[`${medico.id}O`][listaH.key] &&
-                                                                                citasPorMedico[`${medico.id}O`][listaH.key].includes(hora))
-                                                                        }
-                                                                        className="botones"
-                                                                    >
-                                                                        {hora}
-                                                                    </button>
-                                                                </a>
+                                                                <button
+                                                                    disabled={
+                                                                        citasPorMedico[`${medico.id}O`] &&
+                                                                        citasPorMedico[`${medico.id}O`][listaH.key] &&
+                                                                        citasPorMedico[`${medico.id}O`][listaH.key].includes(hora)
+                                                                    }
+                                                                    className="botones"
+                                                                    onClick={() => {
+                                                                        navigate("/confirmView", {
+                                                                            state: {
+                                                                                idM: medico.id,
+                                                                                fecha: formatearFechaISO(listaH.key),
+                                                                                hora: hora,
+                                                                                nombreMedico: medico.nombre,
+                                                                                localidad: medico.localidad,
+                                                                            }
+                                                                        });
+                                                                    }}
+
+                                                                >
+                                                                    {hora}
+                                                                </button>
                                                             </li>
                                                         ))}
                                                     </ul>
@@ -214,10 +204,6 @@ function BuscarCitas({
                                             </div>
                                         </div>
                                     ))}
-
-                                    <button className="schedule-btn">
-                                        <a href={`/presentation/horarios/show/${medico.id}/${fechaAct}`}>Schedule →</a>
-                                    </button>
                                 </div>
                             </li>
                         ))}
@@ -226,6 +212,18 @@ function BuscarCitas({
                     <p>No hay médicos para mostrar.</p>
                 )}
             </div>
+
+            {/*Renderizado condicional del componente de confirmación */}
+            {/*{mostrarConfirmacion && datosCitaSeleccionada && (*/}
+            {/*    <ViewCitaConfirmacion*/}
+            {/*        idM={datosCitaSeleccionada.idM}*/}
+            {/*        fecha={datosCitaSeleccionada.fecha}*/}
+            {/*        hora={datosCitaSeleccionada.hora}*/}
+            {/*        nombreMedico={datosCitaSeleccionada.nombreMedico}*/}
+            {/*        localidad={datosCitaSeleccionada.localidad}*/}
+            {/*        onCerrar={() => setMostrarConfirmacion(false)}*/}
+            {/*    />*/}
+            {/*)}*/}
         </div>
     );
 }
