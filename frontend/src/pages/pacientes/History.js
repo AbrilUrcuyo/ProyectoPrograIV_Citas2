@@ -1,55 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import userImg from '../images/user.png';
 import "./History.css";
-
-// Datos de ejemplo quemados
-const citasEjemplo = [
-    {
-        id: 1,
-        medico: {
-            nombre: "Dr. Juan Pérez",
-            especialidad: "Cardiología",
-            localidad: "San José, Costa Rica",
-            costoConsulta: "₡35,000"
-        },
-        fecha: "2025-05-10",
-        hora: "09:00 AM",
-        estado: "Pendiente"
-    },
-    {
-        id: 2,
-        medico: {
-            nombre: "Dra. Ana Gómez",
-            especialidad: "Dermatología",
-            localidad: "Heredia, Costa Rica",
-            costoConsulta: "₡30,000"
-        },
-        fecha: "2025-05-12",
-        hora: "11:30 AM",
-        estado: "Confirmada"
-    },
-    {
-        id: 3,
-        medico: {
-            nombre: "Dr. Luis Ramírez",
-            especialidad: "Pediatría",
-            localidad: "Alajuela, Costa Rica",
-            costoConsulta: "₡28,000"
-        },
-        fecha: "2025-05-14",
-        hora: "02:00 PM",
-        estado: "Completada"
-    }
-];
 
 const estados = ["Todas", "Pendiente", "Confirmada", "Completada", "Cancelada"];
 
 function History() {
     const [filterE, setFilterE] = useState("Todas");
     const [filterD, setFilterD] = useState("");
-    const [citas] = useState(citasEjemplo);
+    const [citas, setCitas] = useState([]);
+    const [pacienteNombre, setPacienteNombre] = useState("");
+    const backend = "http://localhost:8080";
+    const token = localStorage.getItem('_token');
 
-    const pacienteNombre = "Juan Morales"; // Cambia por el nombre real si lo tienes
+    useEffect(() => {
+        const request = new Request(`${backend}/pacientes/citas`, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('_token'),
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            }
+        });
+        (async () => {
+            const response = await fetch(request);
+            if (!response.ok) {
+                alert("Error: " + response.status);
+                return;
+            }
+            const citasD = await response.json();
+            setPacienteNombre(citasD.pacienteNombre || "Paciente");
+            setCitas(citasD.citas || []);
+        })();
+    }, []);
 
     // Filtrado simple
     const citasFiltradas = citas.filter(cita => {
