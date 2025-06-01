@@ -48,20 +48,26 @@ function BuscarCitas({
             });
 
             // Adaptar horarios disponibles (simulación: agrupa por día de la semana)
-            // Aquí puedes adaptar según tu lógica real de fechas
             if (medico.horarios && medico.horarios.length > 0) {
-                // Agrupa por día de la semana (ejemplo simple)
                 const horariosPorDia = {};
                 medico.horarios.forEach(horario => {
-                    // Suponiendo que tienes una función para obtener la próxima fecha de ese día de la semana
                     const fecha = obtenerProximaFechaDeSemana(horario.diaSemana);
                     if (!horariosPorDia[fecha]) horariosPorDia[fecha] = [];
-                    // Genera las horas disponibles (ejemplo: cada hora entre inicio y fin)
                     const horas = generarHorasDisponibles(horario.horaInicio, horario.horaFin);
                     horariosPorDia[fecha].push(...horas);
                 });
-                citasPorMedico[`${medico.id}H`] = Object.entries(horariosPorDia).map(([key, value]) => ({
-                    key, value
+
+                // Ordena las fechas cronológicamente antes de mapearlas
+                const fechasOrdenadas = Object.keys(horariosPorDia).sort((a, b) => {
+                    // Convierte "dd/mm/yyyy" a Date para comparar
+                    const [da, ma, ya] = a.split('/').map(Number);
+                    const [db, mb, yb] = b.split('/').map(Number);
+                    return new Date(ya, ma - 1, da) - new Date(yb, mb - 1, db);
+                });
+
+                citasPorMedico[`${medico.id}H`] = fechasOrdenadas.map(key => ({
+                    key,
+                    value: horariosPorDia[key]
                 }));
             } else {
                 citasPorMedico[`${medico.id}H`] = [];
@@ -117,6 +123,14 @@ function BuscarCitas({
         return `${anio}-${mes.padStart(2, "0")}-${dia.padStart(2, "0")}`;
     }
 
+    function obtenerFechaActualMasUnaSemana() {
+        const hoy = new Date();
+        hoy.setDate(hoy.getDate() + 7);
+        const year = hoy.getFullYear();
+        const month = String(hoy.getMonth() + 1).padStart(2, '0'); // Obtiene los meses de 0 a 11, por eso se le suma 1, también se usa padStart para asegurar que tenga dos dígitos
+        const day = String(hoy.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
 
     return (
         <div className="search-container">
@@ -204,6 +218,13 @@ function BuscarCitas({
                                             </div>
                                         </div>
                                     ))}
+                                    <button
+                                        className="schedule-btn"
+                                        onClick={() => navigate(`/HorarioExtend/${medico.id}/${obtenerFechaActualMasUnaSemana()}`)}
+                                    >
+                                        Schedule →
+                                    </button>
+
                                 </div>
                             </li>
                         ))}

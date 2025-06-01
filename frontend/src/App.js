@@ -128,7 +128,7 @@ function Main({user, setUser})  {
                 <Route exact path="/admin" element={<AdminView />}/>
                 <Route exact path="/citasMedico" element={<GestionCitas />}/>
                 <Route exact path="/HorarioView" element={<HorarioView/>}/>
-                <Route exact path="/HorarioExtend" element={<HorarioExtendidoView/>}/>
+                <Route exact path="/HorarioExtend/:idMedico/:fecha" element={<HorarioExtendidoView/>}/>
                 <Route exact path="/PerfilMedico" element={<PerfilMedicoView user={user}/>}/>
             </Routes>
         </div>

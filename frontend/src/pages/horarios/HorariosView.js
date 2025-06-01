@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Horarios.css";
 
 
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 const diasSemana = [
     "", // Para que el índice 1 sea Lunes
@@ -16,37 +16,69 @@ const diasSemana = [
 ];
 
 function HorarioView() {
-
-    const [horarios, setHorarios] = useState([
-        { diaSemana: 1, horaInicio: "08:00", horaFin: "12:00" },
-        { diaSemana: 3, horaInicio: "14:00", horaFin: "18:00" },
-    ]);
+    const [horarios, setHorarios] = useState([]);
     const [nuevoHorario, setNuevoHorario] = useState({
         dia: 1,
         horaInicio: "",
         horaFin: "",
     });
 
+    const navigate = useNavigate();
+
+
+    const backend = "http://localhost:8080";
+    const token = localStorage.getItem('_token');
+
     const handleChange = (e) => {
         setNuevoHorario({ ...nuevoHorario, [e.target.name]: e.target.value });
     };
 
-    const handleAgregar = (e) => {
+    function handleHorarios(){
+        const request = new Request(backend + '/horarios/showIngresoH', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        (async ()=>{
+            const response = await fetch(request);
+            if (!response.ok) {alert("Error: "+response.status);return;}
+            const horarios = await response.json();
+            setHorarios(horarios);
+        })();
+    }
+
+    useEffect(() => {
+        handleHorarios();
+    }, []);
+
+    const handleAgregar = async (e) => {
         e.preventDefault();
-        setHorarios([
-            ...horarios,
-            {
-                diaSemana: parseInt(nuevoHorario.dia),
-                horaInicio: nuevoHorario.horaInicio,
-                horaFin: nuevoHorario.horaFin,
+
+        const request = new Request(backend + '/horarios/ingresarH', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             },
-        ]);
+            body: JSON.stringify({
+                dia: nuevoHorario.dia,
+                horaInicio: nuevoHorario.horaInicio,
+                horaFin: nuevoHorario.horaFin
+            })
+        });
+
+        const response = await fetch(request);
+        if (!response.ok) {
+            alert("Error: " + response.status);
+            return;
+        }
         setNuevoHorario({ dia: 1, horaInicio: "", horaFin: "" });
+        handleHorarios();
     };
 
     const handleFinalizar = () => {
-        // Aquí puedes redirigir o realizar otra acción
-        alert("Finalizar");
+        navigate("/citasMedico")
     };
 
     return (
@@ -65,7 +97,7 @@ function HorarioView() {
                         <tbody>
                         {horarios.map((horario, idx) => (
                             <tr key={idx}>
-                                <td>{diasSemana[horario.diaSemana]}</td>
+                                <td>{horario.diaSemana}</td>
                                 <td>
                                     {horario.horaInicio} - {horario.horaFin}
                                 </td>
