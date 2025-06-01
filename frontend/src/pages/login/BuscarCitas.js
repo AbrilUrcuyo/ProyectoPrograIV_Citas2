@@ -7,9 +7,7 @@ import ViewCitaConfirmacion  from "../pacientes/ConfirmView";
 
 
 // Modifica la función para usar los datos por defecto si no recibe props
-function BuscarCitas({
-
-                     }) {
+function BuscarCitas() {
     const [medicos, setMedicos] = useState([]);
     const [citasPorMedico, setCitasPorMedico] = useState({});
     const backend="http://localhost:8080";
@@ -18,8 +16,11 @@ function BuscarCitas({
     const navigate = useNavigate();
     const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
     const [datosCitaSeleccionada, setDatosCitaSeleccionada] = useState(null);
-
-
+    const medicosFiltrados = medicos.filter(medico => {
+        const matchEspecialidad = especialidad === "" || medico.especialidad.toLowerCase().includes(especialidad.toLowerCase());
+        const matchLocalidad = localidad === "" || medico.localidad.toLowerCase().includes(localidad.toLowerCase());
+        return matchEspecialidad && matchLocalidad;
+    });
 
 
     useEffect(()=>{
@@ -135,7 +136,7 @@ function BuscarCitas({
     return (
         <div className="search-container">
             <div className="search-form">
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={e=>e.preventDefault}>
                     <input
                         type="text"
                         name="especialidad"
@@ -150,14 +151,13 @@ function BuscarCitas({
                         value={localidad}
                         onChange={e => setLocalidad(e.target.value)}
                     />
-                    <button type="submit">Buscar</button>
                 </form>
             </div>
 
             <div className="doctor-list">
                 {medicos.length > 0 ? (
                     <ul>
-                        {medicos.map((medico) => (
+                        {medicosFiltrados.map((medico) => (
                             <li key={medico.id}>
                                 <div className="doctor-card">
                                     <div>
