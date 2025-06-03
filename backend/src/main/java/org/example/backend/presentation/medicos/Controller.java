@@ -65,54 +65,54 @@ public class Controller {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
+//
+//    @GetMapping("/show")
+//    public String show(Model model) {
+//        model.addAttribute("medicos", service.findAllMedicos());
+//        return "/medicos/View";
+//    }
 
-    @GetMapping("/show")
-    public String show(Model model) {
-        model.addAttribute("medicos", service.findAllMedicos());
-        return "/medicos/View";
-    }
-
-    @GetMapping("/appointment")
-    public String appointment(Model model, @AuthenticationPrincipal(expression = "usuario") Usuario usuario, HttpSession session) {
-
-        String id = usuario.getId();
-        Medico m = service.findMedicoById(id);
-        model.addAttribute("medico", m);
-
-        Set<Cita> citas = m.getCitas();
-
-        List<Cita> citasOrdenadas = citas.stream()
-                .sorted((c1, c2) -> {
-                    int compareFecha = c2.getFecha().compareTo(c1.getFecha());
-                    if (compareFecha == 0) {
-                        return c2.getHora().compareTo(c1.getHora());
-                    }
-                    return compareFecha;
-                })
-                .collect(Collectors.toList());
-
-        String estado = (String) session.getAttribute("estado");
-        if (estado != null && !estado.equals("Todas")) {
-            String finalEstado = estado;
-            citasOrdenadas.removeIf(cita -> !cita.getEstado().equals(finalEstado));
-        }else{
-            estado = "Todas";
-        }
-        model.addAttribute("filterE", estado);
-
-        String paciente = (String) session.getAttribute("paciente");
-        if(paciente != null && !Objects.equals(paciente, "")){
-            String finalPaciente = paciente;
-            citasOrdenadas.removeIf(cita -> !cita.getIdPaciente().getNombre().contains(finalPaciente));
-        }else{
-            paciente = "";
-        }
-        model.addAttribute("filterP", paciente);
-
-
-        model.addAttribute("citas", citasOrdenadas);
-        return "/medicos/appointment";
-    }
+//    @GetMapping("/appointment")
+//    public String appointment(Model model, @AuthenticationPrincipal(expression = "usuario") Usuario usuario, HttpSession session) {
+//
+//        String id = usuario.getId();
+//        Medico m = service.findMedicoById(id);
+//        model.addAttribute("medico", m);
+//
+//        Set<Cita> citas = m.getCitas();
+//
+//        List<Cita> citasOrdenadas = citas.stream()
+//                .sorted((c1, c2) -> {
+//                    int compareFecha = c2.getFecha().compareTo(c1.getFecha());
+//                    if (compareFecha == 0) {
+//                        return c2.getHora().compareTo(c1.getHora());
+//                    }
+//                    return compareFecha;
+//                })
+//                .collect(Collectors.toList());
+//
+//        String estado = (String) session.getAttribute("estado");
+//        if (estado != null && !estado.equals("Todas")) {
+//            String finalEstado = estado;
+//            citasOrdenadas.removeIf(cita -> !cita.getEstado().equals(finalEstado));
+//        }else{
+//            estado = "Todas";
+//        }
+//        model.addAttribute("filterE", estado);
+//
+//        String paciente = (String) session.getAttribute("paciente");
+//        if(paciente != null && !Objects.equals(paciente, "")){
+//            String finalPaciente = paciente;
+//            citasOrdenadas.removeIf(cita -> !cita.getIdPaciente().getNombre().contains(finalPaciente));
+//        }else{
+//            paciente = "";
+//        }
+//        model.addAttribute("filterP", paciente);
+//
+//
+//        model.addAttribute("citas", citasOrdenadas);
+//        return "/medicos/appointment";
+//    }
 
     @PostMapping("/citas/buscar")
     public List<CitaDto> search(@RequestBody BuscarCitasRequest request) {
@@ -149,27 +149,27 @@ public class Controller {
         return citas;
     }
 
-    @GetMapping("/ingresoMedicos")
-    public String perfilMedico(@AuthenticationPrincipal(expression = "usuario") Usuario usuario) {
-        Medico m = service.findMedicoById(usuario.getId());
-        if(Objects.equals(m.getEmail(), "") || Objects.equals(m.getEspecialidad(), "") || Objects.equals(m.getLocalidad(), "")){
-            return "redirect:/presentation/medicos/perfilMedico";
-        }
-        return "redirect:/medicos/appointment";
-    }
+//    @GetMapping("/ingresoMedicos")
+//    public String perfilMedico(@AuthenticationPrincipal(expression = "usuario") Usuario usuario) {
+//        Medico m = service.findMedicoById(usuario.getId());
+//        if(Objects.equals(m.getEmail(), "") || Objects.equals(m.getEspecialidad(), "") || Objects.equals(m.getLocalidad(), "")){
+//            return "redirect:/presentation/medicos/perfilMedico";
+//        }
+//        return "redirect:/medicos/appointment";
+//    }
 
-    @GetMapping("/perfilMedico")
-    public String perfilMedico(Model model,@AuthenticationPrincipal(expression = "usuario") Usuario usuario) {
-        String id = usuario.getId();
-        Medico m = service.findMedicoById(id);
-        if(m.getEstadoAprob().equals("Aprobado")) {
-            model.addAttribute("medico", m);
-            model.addAttribute("error", "");
-            return "/presentation/medicos/perfilMedico";
-        }else{
-            return "redirect:/medicos/appointment";
-        }
-    }
+//    @GetMapping("/perfilMedico")
+//    public String perfilMedico(Model model,@AuthenticationPrincipal(expression = "usuario") Usuario usuario) {
+//        String id = usuario.getId();
+//        Medico m = service.findMedicoById(id);
+//        if(m.getEstadoAprob().equals("Aprobado")) {
+//            model.addAttribute("medico", m);
+//            model.addAttribute("error", "");
+//            return "/presentation/medicos/perfilMedico";
+//        }else{
+//            return "redirect:/medicos/appointment";
+//        }
+//    }
 
     @PostMapping("/actualizarMedico")
     public ResponseEntity<?> actualizarMedico(@AuthenticationPrincipal Jwt jwt, @RequestBody MedicoDtoSinCita m) {

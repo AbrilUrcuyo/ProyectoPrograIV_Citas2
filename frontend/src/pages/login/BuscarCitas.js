@@ -163,7 +163,7 @@ function BuscarCitas() {
                                     <div>
                                         <div className="doctor-info">
                                             {/* Si usas imágenes locales, reemplaza por una ruta accesible o descomenta import userImg */}
-                                            <img src={/*userImg ||*/ `/ruta/por/defecto.jpg`} alt="Doctor"
+                                            <img src={`http://localhost:8080/usuarios/photo/${medico.id}`} alt="Doctor"
                                                  className="doctor-photo"/>
                                             <div className="doctor-details">
                                                 <h3>

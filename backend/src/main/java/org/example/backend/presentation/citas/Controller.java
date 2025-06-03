@@ -18,12 +18,12 @@ public class Controller {
     @Autowired
     private Service service;
 
-
-    @GetMapping("/show")
-    public String show(Model model) {
-        model.addAttribute("citas", service.findAllCitas());
-        return "/presentation/citas/View";
-    }
+//
+//    @GetMapping("/show")
+//    public String show(Model model) {
+//        model.addAttribute("citas", service.findAllCitas());
+//        return "/presentation/citas/View";
+//    }
 
     @GetMapping("/confirmar/{citaId}")
     public void confirmar(@PathVariable("citaId") int citaId) {
