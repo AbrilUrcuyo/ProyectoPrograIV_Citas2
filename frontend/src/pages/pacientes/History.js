@@ -98,7 +98,7 @@ function History() {
                 )}
                 {citasFiltradas.map(cita => (
                     <div key={cita.id} className="appointment">
-                        <img src={userImg} alt="Doctor" className="doctor-photo" />
+                        <img src={`http://localhost:8080/usuarios/photo/${cita.medico.id}`} alt="Doctor" className="doctor-photo" />
                         <div className="appointment-details">
                             <h3>
                                 <span>{cita.medico.nombre}</span>

@@ -45,7 +45,7 @@ function ViewCitaConfirmacion() {
     return (
         <div className="container-confir-citas">
             <div className="confirmation-card">
-                <img src={userImg} alt="Doctor" className="doctor-photo" />
+                <img src={`http://localhost:8080/usuarios/photo/${idM}`} alt="Doctor" className="doctor-photo" />
                 <div className="doctor-name">
                     <p>{nombreMedico}</p>
                 </div>

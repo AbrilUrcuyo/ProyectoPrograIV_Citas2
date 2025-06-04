@@ -5,23 +5,28 @@ import org.example.backend.data.UsuarioRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 @Configuration
 @AllArgsConstructor
@@ -43,10 +48,41 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/", "/usuarios/Register", "/usuarios/login", "/horarios/show/**", "/error").permitAll()
+                        // Rutas públicas
+                        .requestMatchers("/", "/horarios/show/**", "/usuarios/**", "/error").permitAll()
+                        // Rutas para pacientes
+                        .requestMatchers( "/pacientes/citas", "/pacientes/confirmarCita").hasAuthority("Paciente")
+                        // Rutas para médicos
+                        .requestMatchers("/medicos/**", "/horarios/showIngresoH", "/horarios/ingresarH", "/citas/**").hasAuthority("Medico")
+                        // Rutas para administradores
+                        .requestMatchers("/admin/**").hasAuthority("Administrador")
+                        // Cualquier otra ruta requiere autenticación
                         .anyRequest().authenticated())
-                .oauth2ResourceServer(configurer -> configurer.jwt(Customizer.withDefaults()))
+                .oauth2ResourceServer(configurer -> 
+                    configurer.jwt(jwt -> {
+                        jwt.jwtAuthenticationConverter(jwtAuthenticationConverter());
+                    }))
                 .build();
+    }
+
+    @Bean
+    public Converter<Jwt, ? extends AbstractAuthenticationToken> jwtAuthenticationConverter() {
+        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+            // Obtiene el claim "scope"
+            Object scopes = jwt.getClaim("scope");
+            if (scopes instanceof String) {
+                return AuthorityUtils.commaSeparatedStringToAuthorityList((String) scopes);
+            } else if (scopes instanceof Collection<?>) {
+                Collection<?> scopeCollection = (Collection<?>) scopes;
+                String scopesAsString = String.join(",", scopeCollection.stream()
+                        .map(Object::toString)
+                        .toList());
+                return AuthorityUtils.commaSeparatedStringToAuthorityList(scopesAsString);
+            }
+            return AuthorityUtils.NO_AUTHORITIES;
+        });
+        return converter;
     }
 
     @Bean

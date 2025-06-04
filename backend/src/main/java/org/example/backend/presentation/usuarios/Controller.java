@@ -5,6 +5,8 @@ import org.example.backend.logic.Usuario;
 import org.example.backend.data.UsuarioRepository;
 import org.example.backend.presentation.security.TokenService;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,6 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 
@@ -38,8 +42,21 @@ public class Controller {
     @Autowired
     private Service service;
 
-//    @Value("${picturesPath}")
-//    private String picturesPath;
+    @GetMapping("/photo/{id}")
+    public ResponseEntity<Resource> photo(@PathVariable String id) throws Exception {
+        Path path = Paths.get("C:/AAA/images/" + id);
+        Resource resource = new UrlResource(path.toUri());
+
+
+        if (!resource.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(resource);
+    }
+
 
     @PostMapping(value = "/Register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> register(

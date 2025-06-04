@@ -42,6 +42,7 @@ function PerfilMedicoView({user}) {
 
         const medico = await response.json();
         setForm({
+            id: medico.id,
             email: medico.email || "",
             especialidad: medico.especialidad || "",
             costoConsulta: medico.costoConsulta || 0,
@@ -98,7 +99,7 @@ function PerfilMedicoView({user}) {
                 <div className="loginBlock">
                     <div className="userImg">
                         <img
-                            src={`/presentation/usuarios/photo/${form.id}`}
+                            src={`http://localhost:8080/usuarios/photo/${form.id}`}
                             alt="Foto del médico"
                             style={{ width: "20%" }}
                         />

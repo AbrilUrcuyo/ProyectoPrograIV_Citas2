@@ -93,7 +93,7 @@ function HorarioExtendido({idMedico, fechaI}) {
                     <div>
                         <div className="userImg">
                             <img
-                                src={`/presentation/usuarios/photo/${medico.id}`}
+                                src={`http://localhost:8080/usuarios/photo/${medico.id}`}
                                 alt="Medico"
                             />
                             <div>

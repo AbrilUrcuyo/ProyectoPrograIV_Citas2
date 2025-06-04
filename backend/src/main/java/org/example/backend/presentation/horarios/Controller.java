@@ -72,30 +72,30 @@ public class Controller {
         return new EstructuraHE(new MedicoDto1(med.getId(), med.getNombre(), med.getEspecialidad(), med.getCostoConsulta(), med.getLocalidad()), fechas, citas, ocupadas);
     }
 
-    @GetMapping("/next/{id}/{fecha}")
-    public String next(@PathVariable("id") String id, @PathVariable("fecha") String fecha) {
-        LocalDate date = LocalDate.parse(fecha);
-        String nuevaFecha = date.plusWeeks(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-        return "redirect:/presentation/horarios/show/" + id + "/" + nuevaFecha;
-    }
-
-    @GetMapping("/prev/{id}/{fecha}")
-    public String prev(@PathVariable("id") String id, @PathVariable("fecha") String fecha) {
-        LocalDate date = LocalDate.parse(fecha);
-        LocalDate semanaPrevia = date.minusWeeks(1);
-        String nuevaFecha;
-        if(!semanaPrevia.isBefore(LocalDate.now()) ){
-            nuevaFecha = semanaPrevia.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        }else{
-            nuevaFecha = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        }
-
-        return "redirect:/presentation/horarios/show/" + id + "/" + nuevaFecha;
-    }
+//    @GetMapping("/next/{id}/{fecha}")
+//    public String next(@PathVariable("id") String id, @PathVariable("fecha") String fecha) {
+//        LocalDate date = LocalDate.parse(fecha);
+//        String nuevaFecha = date.plusWeeks(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+//
+//        return "redirect:/presentation/horarios/show/" + id + "/" + nuevaFecha;
+//    }
+//
+//    @GetMapping("/prev/{id}/{fecha}")
+//    public String prev(@PathVariable("id") String id, @PathVariable("fecha") String fecha) {
+//        LocalDate date = LocalDate.parse(fecha);
+//        LocalDate semanaPrevia = date.minusWeeks(1);
+//        String nuevaFecha;
+//        if(!semanaPrevia.isBefore(LocalDate.now()) ){
+//            nuevaFecha = semanaPrevia.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+//        }else{
+//            nuevaFecha = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+//        }
+//
+//        return "redirect:/presentation/horarios/show/" + id + "/" + nuevaFecha;
+//    }
 
     public record HorarioDto(Integer id, String diaSemana, LocalTime horaInicio, LocalTime horaFin){}
-    public record MedicoDto(String id, String nombre, String especialidad, int costoConsulta, String localidad, List<HorarioDto> horarios) { }
+//    public record MedicoDto(String id, String nombre, String especialidad, int costoConsulta, String localidad, List<HorarioDto> horarios) { }
 
 
     @GetMapping("/showIngresoH")
@@ -169,11 +169,11 @@ public class Controller {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
     }
-
-    @GetMapping("/finalizar")
-    public String finalizar(Model model) {
-        return "redirect:/presentation/medicos/appointment";
-    }
+//
+//    @GetMapping("/finalizar")
+//    public String finalizar(Model model) {
+//        return "redirect:/presentation/medicos/appointment";
+//    }
 
 }
 

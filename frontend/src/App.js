@@ -1,29 +1,25 @@
 import logo from './logo.svg';
 import './App.css';
 import {Link, BrowserRouter, Routes, Route, Router, useNavigate} from 'react-router-dom'
-
-
 import LoginView from './pages/login/LoginView';
 import RegisterView from './pages/login/RegisterView';
 import HistoryView from './pages/pacientes/History';
 import HorarioView from './pages/horarios/HorariosView';
 import HorarioExtendidoView from "./pages/horarios/HorarioExtendidoView";
-
 import telefono from './pages/images/telefono.png';
 import headerLogo from './pages/images/doctorHeader.jpg';
 import instaImage from './pages/images/instagram.png';
 import facebookImage from './pages/images/facebook.png';
 import twitterImg from './pages/images/logotipo-de-twitter.png';
-import React, {Profiler, useState, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import ConfirmView from "./pages/pacientes/ConfirmView";
 import BuscarCitas from "./pages/login/BuscarCitas";
 import AdminView from "./pages/admin/medicosPendientes";
 import PerfilMedicoView from "./pages/medicos/PerfilMedicoView";
 import GestionCitas from "./pages/medicos/GestionCitas";
+import AppProvider from "./AppProvider";
 
 function Header({user, setUser}) {
-    const[visible, setVisible] = useState(false);
-    const backend="http://localhost:8080";
     const navigate = useNavigate();
 
 
@@ -106,11 +102,14 @@ function App() {
 
     return (
         <div className="App">
-            <BrowserRouter>
-                <Header user={user} setUser={setUser}/>
-                <Main user={user} setUser={setUser} />
-                <Footer />
-            </BrowserRouter>
+            <AppProvider>
+                <BrowserRouter>
+                    <Header user={user} setUser={setUser}/>
+                    <Main user={user} setUser={setUser} />
+                    <Footer />
+                </BrowserRouter>
+            </AppProvider>
+
         </div>
     );
 }

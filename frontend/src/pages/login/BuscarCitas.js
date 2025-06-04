@@ -1,24 +1,24 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
-
 import "./BuscarCitas.css";
-import ViewCitaConfirmacion  from "../pacientes/ConfirmView";
-// import userImg from '../images/user.png'; // Descomenta si tienes imágenes
+import { AppContext } from '../../AppProvider';
 
 
 // Modifica la función para usar los datos por defecto si no recibe props
 function BuscarCitas() {
+    const {buscarCitas, setBuscarCitas} = useContext(AppContext);
+
     const [medicos, setMedicos] = useState([]);
     const [citasPorMedico, setCitasPorMedico] = useState({});
     const backend="http://localhost:8080";
     const [especialidad, setEspecialidad] = useState("");
     const [localidad, setLocalidad] = useState("");
     const navigate = useNavigate();
-    const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
-    const [datosCitaSeleccionada, setDatosCitaSeleccionada] = useState(null);
     const medicosFiltrados = medicos.filter(medico => {
-        const matchEspecialidad = especialidad === "" || medico.especialidad.toLowerCase().includes(especialidad.toLowerCase());
-        const matchLocalidad = localidad === "" || medico.localidad.toLowerCase().includes(localidad.toLowerCase());
+        const especialidad = medico.especialidad || "";
+        const localidad = medico.localidad || "";
+        const matchEspecialidad = buscarCitas.especialidad === "" || especialidad.toLowerCase().includes(buscarCitas.especialidad.toLowerCase());
+        const matchLocalidad = buscarCitas.localidad === "" || localidad.toLowerCase().includes(buscarCitas.localidad.toLowerCase());
         return matchEspecialidad && matchLocalidad;
     });
 
@@ -141,14 +141,14 @@ function BuscarCitas() {
                         type="text"
                         name="especialidad"
                         placeholder="Especialidad"
-                        value={especialidad}
-                        onChange={e => setEspecialidad(e.target.value)}
+                        value={buscarCitas.especialidad}
+                        onChange={e => setBuscarCitas({...buscarCitas, especialidad: e.target.value})}
                     />
                     <input
                         type="text"
                         name="localidad"
                         placeholder="Ciudad o Provincia"
-                        value={localidad}
+                        value={buscarCitas.localidad}
                         onChange={e => setLocalidad(e.target.value)}
                     />
                 </form>
@@ -163,7 +163,7 @@ function BuscarCitas() {
                                     <div>
                                         <div className="doctor-info">
                                             {/* Si usas imágenes locales, reemplaza por una ruta accesible o descomenta import userImg */}
-                                            <img src={/*userImg ||*/ `/ruta/por/defecto.jpg`} alt="Doctor"
+                                            <img src={`http://localhost:8080/usuarios/photo/${medico.id}`} alt="Doctor"
                                                  className="doctor-photo"/>
                                             <div className="doctor-details">
                                                 <h3>
