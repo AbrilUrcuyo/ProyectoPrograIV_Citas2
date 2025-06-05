@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useContext} from "react";
 import './GestionCitas.css'
 import {useNavigate} from "react-router-dom";
 import AnotacionModal from "./EditarAnotacion";
+import { AppContext } from '../../AppProvider';
+
 const estados = ["Todas", "Pendiente", "Confirmada", "Completada", "Cancelada"];
 
 function GestionCitas() {
     // Estados locales para filtros
-    const [filterE, setFilterE] = useState("Todas");
-    const [filterP, setFilterP] = useState("");
     const [medico, setMedico]  = useState({});
     const [citas, setCitas]  = useState([]);
     const [showModal, setShowModal] = useState(false);
@@ -18,9 +18,15 @@ function GestionCitas() {
     const backend = "http://localhost:8080";
     const token = localStorage.getItem('_token');
 
+    const {gestionCitas, setGestionCitas} = useContext(AppContext);
+
     useEffect( ()=> {
         handleMedico();
-        handleSearch();
+        if (gestionCitas.citasFiltradas) {
+            setCitas(gestionCitas.citasFiltradas);
+        } else {
+            handleSearch();
+        }
     }, []);
 
     function handleMedico(){
@@ -49,15 +55,19 @@ function GestionCitas() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                estado: filterE,
-                paciente: filterP
+                estado: gestionCitas.filterE,
+                paciente: gestionCitas.filterP
             })
         });
         (async () => {
             const response = await fetch(request);
-            if (!response.ok) { alert("Error: " + response.status); return; }
+            if (!response.ok) {
+                alert("Error: " + response.status);
+                return;
+            }
             const citasD = await response.json();
             setCitas(citasD || []);
+            setGestionCitas(prev=> ({...prev, citasFiltradas: citasD}));
         })();
     }
 
@@ -172,8 +182,8 @@ function GestionCitas() {
                         id="status"
                         name="estado"
                         className="search-select"
-                        value={filterE}
-                        onChange={e => setFilterE(e.target.value)}
+                        value={gestionCitas.filterE}
+                        onChange={e => setGestionCitas({...gestionCitas, filterE: e.target.value})}
                     >
                         {estados.map(e => (
                             <option key={e} value={e}>{e}</option>
@@ -187,15 +197,15 @@ function GestionCitas() {
                         id="doctor"
                         name="paciente"
                         className="search-input"
-                        value={filterP}
-                        onChange={e => setFilterP(e.target.value)}
+                        value={gestionCitas.filterP}
+                        onChange={e => setGestionCitas({...gestionCitas, filterP: e.target.value})}
                     />
                 </div>
                 <button type="submit" className="search-button">Search</button>
             </form>
 
             <div className="appointments">
-                {citas?.map((cita) => (
+                {gestionCitas.citasFiltradas?.map((cita) => (
                     <div key={cita.id} className="appointment">
                         <div className="row">
                             <img src="/images/camara.png" alt="Patient" className="patient-photo" />

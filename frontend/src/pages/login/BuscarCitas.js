@@ -149,7 +149,7 @@ function BuscarCitas() {
                         name="localidad"
                         placeholder="Ciudad o Provincia"
                         value={buscarCitas.localidad}
-                        onChange={e => setLocalidad(e.target.value)}
+                        onChange={e => setBuscarCitas({...buscarCitas, localidad: e.target.value})}
                     />
                 </form>
             </div>
