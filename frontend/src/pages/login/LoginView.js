@@ -41,6 +41,7 @@ function LoginView ({setUser}) {
             localStorage.setItem('_token', data.token);
             const userData = decodeToken(data.token);
             setUser(userData);
+
             if(userData.rol==='Administrador'){
                 navigate('/admin');
             }else if(userData.rol==='Medico'){
