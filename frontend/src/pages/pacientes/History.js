@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useContext} from "react";
 import userImg from '../images/user.png';
 import "./History.css";
+import {AppContext} from "../../AppProvider";
 
 const estados = ["Todas", "Pendiente", "Confirmada", "Completada", "Cancelada"];
 
@@ -12,7 +13,18 @@ function History() {
     const backend = "http://localhost:8080";
     const token = localStorage.getItem('_token');
 
+    const { historicoCitas, setHistorico} = useContext(AppContext);
+
     useEffect(() => {
+        handleList();
+        if(historicoCitas.citasFiltradas) {
+            setCitas(historicoCitas.citasFiltradas);
+        }else{
+            handleSearch();
+        }
+    }, []);
+
+    function handleList(){
         const request = new Request(`${backend}/pacientes/citas`, {
             method: 'GET',
             headers: {
@@ -31,14 +43,33 @@ function History() {
             setPacienteNombre(citasD.pacienteNombre || "Paciente");
             setCitas(citasD.citas || []);
         })();
-    }, []);
+    }
 
-    // Filtrado simple
-    const citasFiltradas = citas.filter(cita => {
-        const matchEstado = filterE === "Todas" || cita.estado === filterE;
-        const matchDoctor = cita.medico.nombre.toLowerCase().includes(filterD.toLowerCase());
-        return matchEstado && matchDoctor;
-    });
+    const handleSearch = (e) => {
+        if (e) e.preventDefault();
+        const request = new Request(backend + '/pacientes/buscar', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                estado:historicoCitas.estado,
+                nombreM: historicoCitas.nombreM,
+            })
+        });
+        (async () => {
+            const response = await fetch(request);
+            if (!response.ok) {
+                alert("Error: " + response.status);
+                return;
+            }
+            const citasD = await response.json();
+            setCitas(citasD || []);
+            setHistorico(prev=> ({...prev, citasFiltradas: citasD}));
+        })();
+    }
+
 
     // Para clases de estado
     const estadoClass = (estado) => {
@@ -59,7 +90,7 @@ function History() {
 
             <form
                 className="search-form"
-                onSubmit={e => e.preventDefault()}
+                onSubmit={handleSearch}
             >
                 <div className="search-group">
                     <label htmlFor="status" className="search-label">Estado</label>
@@ -67,8 +98,8 @@ function History() {
                         id="status"
                         name="estado"
                         className="search-select"
-                        value={filterE}
-                        onChange={e => setFilterE(e.target.value)}
+                        value={historicoCitas.estado}
+                        onChange={e=>setHistorico({...historicoCitas, estado: e.target.value})}
                     >
                         {estados.map(estado => (
                             <option key={estado} value={estado}>{estado}</option>
@@ -82,21 +113,21 @@ function History() {
                         id="doctor"
                         name="doctor"
                         className="search-input"
-                        value={filterD}
-                        onChange={e => setFilterD(e.target.value)}
+                        value={historicoCitas.nombreM}
+                        onChange={e => setHistorico({...historicoCitas, nombreM: e.target.value})}
                         placeholder="Buscar por nombre"
                     />
                 </div>
-                <button type="submit" className="search-button">Search</button>
+                <button type="submit" className="search-button" onClick={handleSearch}>Search</button>
             </form>
 
             <div className="appointments">
-                {citasFiltradas.length === 0 && (
+                {historicoCitas.citasFiltradas?.length === 0 && (
                     <div className="appointment">
                         <p>No hay citas que coincidan con los filtros.</p>
                     </div>
                 )}
-                {citasFiltradas.map(cita => (
+                {historicoCitas.citasFiltradas?.map(cita => (
                     <div key={cita.id} className="appointment">
                         <img src={`http://localhost:8080/usuarios/photo/${cita.medico.id}`} alt="Doctor" className="doctor-photo" />
                         <div className="appointment-details">

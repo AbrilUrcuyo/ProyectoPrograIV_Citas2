@@ -28,4 +28,7 @@ public interface CitaRepository extends CrudRepository<Cita, String> {
     @Modifying
     @Query("update Cita set anotaciones = :anotacion WHERE id = :id")
     void updateAnotaciones(@NotNull @Param("id") Integer id, @NotNull @Param("anotacion") String anotacion);
+
+    List<Cita> findByIdPaciente_Id(String idPaciente);
+
 }

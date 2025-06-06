@@ -1,6 +1,7 @@
 package org.example.backend.presentation.pacientes;
 
 import org.example.backend.logic.Cita;
+import org.example.backend.logic.Medico;
 import org.example.backend.logic.Service;
 import org.example.backend.logic.Paciente;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,10 @@ public class Controller {
 
     @Autowired
     private Service service;
+    public record MedicoDTO(String id, String nombre, int costoConsulta, String especialidad, String localidad ) {}
+    public record CitaDTOsinMedico(Integer id, LocalDate fecha, LocalTime hora, String estado, MedicoDTO medico) { };
+
+    public record FiltroCitasRequest(String estado, String nombreM) {}
 
     public record CitaDto(
             Integer id,
@@ -96,108 +101,38 @@ public class Controller {
     }
 
 
+    @PostMapping("/buscar")
+    public List<CitaDTOsinMedico> filtrarCitas(@RequestBody FiltroCitasRequest request) {
+        String estado = request.estado();
+        String nombreMedico = request.nombreM();
+
+        String idPaciente = service.getUserId();
+        List<Cita> citas = service.obtenerCitasPorPaciente(idPaciente);
+
+        return citas.stream()
+                .filter(cita ->
+                        (estado.equals("Todas") || cita.getEstado().equalsIgnoreCase(estado)) &&
+                                (nombreMedico == null || nombreMedico.isEmpty() ||
+                                        cita.getIdMedico().getNombre().toLowerCase().contains(nombreMedico.toLowerCase()))
+                )
+                .map(cita -> {
+                    Medico m = cita.getIdMedico();
+                    MedicoDTO mDto = new MedicoDTO(
+                            m.getId(),
+                            m.getNombre(),
+                            m.getCostoConsulta(),
+                            m.getEspecialidad(),
+                            m.getLocalidad()
+                    );
+                    return new CitaDTOsinMedico(
+                            cita.getId(),
+                            cita.getFecha(),
+                            cita.getHora(),
+                            cita.getEstado(),
+                            mDto
+                    );
+                })
+                .toList();
+    }
+
 }
-
-
-//@PostMapping("/citas/confirmar")
-//public void confirmarCita(@RequestBody CitaDto cita) {
-//    String cedula = service.getUserId();
-//
-//
-//    String idMedico = request.getIdM();
-//    LocalDate fecha = LocalDate.parse(request.getFecha());
-//    LocalTime hora = LocalTime.parse(request.getHora());
-//    service.registrarCita(cedula, idMedico, fecha, hora);
-//    return ResponseEntity.ok().build();
-//}
-
-
-//
-//    @GetMapping("/confirmarCita/{idM}/{fecha}/{hora}")
-//    public String confirmarCita(Model model, @AuthenticationPrincipal(expression = "usuario")Usuario usuario, @PathVariable("idM") String idM, @PathVariable("fecha") LocalDate fecha, @PathVariable("hora") LocalTime hora) {
-////        LocalDate date = LocalDate.parse(fecha, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-////        LocalTime hour = LocalTime.parse(hora, DateTimeFormatter.ofPattern("hh:mm"));
-//        String idP = usuario.getId();
-//        service.registrarCita(idP, idM, fecha, hora);
-//        return "redirect:/presentation/pacientes/appointment";
-//    }
-//
-//    @GetMapping("/appointment")
-//    public String appointment(Model model, @AuthenticationPrincipal(expression = "usuario")Usuario usuario) {
-//        String id = usuario.getId();
-//        model.addAttribute("paciente", service.findPacienteById(id));
-//
-//
-//        Set<Cita> citas = service.findPacienteById(id).getCitas();
-//
-//        LocalDate fechaActual = LocalDate.now();
-//        LocalTime horaActual = LocalTime.now();
-//
-//        List<Cita> citasOrdenadas = citas.stream()
-//                .sorted((c1, c2) -> {
-//                    long diasDiferencia1 = Math.abs(ChronoUnit.DAYS.between(c1.getFecha(), fechaActual));
-//                    long diasDiferencia2 = Math.abs(ChronoUnit.DAYS.between(c2.getFecha(), fechaActual));
-//
-//                    if (diasDiferencia1 != diasDiferencia2) {
-//                        return Long.compare(diasDiferencia1, diasDiferencia2);
-//                    }
-//
-//                    if (c1.getFecha().equals(fechaActual) && c2.getFecha().equals(fechaActual)) {
-//                        long minutosDiferencia1 = Math.abs(ChronoUnit.MINUTES.between(c1.getHora(), horaActual));
-//                        long minutosDiferencia2 = Math.abs(ChronoUnit.MINUTES.between(c2.getHora(), horaActual));
-//                        return Long.compare(minutosDiferencia1, minutosDiferencia2);
-//                    }
-//
-//                    return c1.getHora().compareTo(c2.getHora());
-//                })
-//                .collect(Collectors.toList());
-//
-//        model.addAttribute("citas", citasOrdenadas);
-//
-//        return "/presentation/pacientes/History";
-//    }
-//    @PostMapping("/appointment/buscar")
-//    public String search(Model model, @AuthenticationPrincipal(expression = "usuario")Usuario usuario, @RequestParam("estado") String estado, @RequestParam("doctor") String doctor) {
-//        String id =  usuario.getId();
-//        model.addAttribute("paciente", service.findPacienteById(id));
-//
-//        Set<Cita> citas = service.findPacienteById(id).getCitas();
-//
-//        List<Cita> citasOrdenadas = citas.stream()
-//                .sorted((c1, c2) -> {
-//                    int compareFecha = c2.getFecha().compareTo(c1.getFecha());
-//                    if (compareFecha == 0) {
-//                        return c2.getHora().compareTo(c1.getHora());
-//                    }
-//                    return compareFecha;
-//                })
-//                .collect(Collectors.toList());
-//
-//        if(!Objects.equals(estado, "Todas")){
-//            citasOrdenadas.removeIf(cita -> !cita.getEstado().equals(estado));
-//        }
-//
-//        if(!Objects.equals(doctor, "")){
-//            citasOrdenadas.removeIf(cita -> !cita.getIdMedico().getNombre().equals(doctor));
-//        }
-//
-//        model.addAttribute("citas", citasOrdenadas);
-//
-//        return "/presentation/pacientes/History";
-//    }
-//
-//    @GetMapping("/perfilP")
-//    public String perfilP(Model model,@AuthenticationPrincipal(expression = "usuario")Usuario usuario) {
-//        String id =  usuario.getId();
-//        model.addAttribute("id",id);
-//        return "/presentation/pacientes/perfilPaciente";
-//    }
-//
-//    @PostMapping("/actualizar")
-//    public String actualizarPaciente(Model model, @RequestParam("id") String id, @RequestParam("padecimientos") String padecimientos) {
-//        service.actualizarPaciente(id, padecimientos);
-//        return "redirect:/presentation/usuarios/index/show";
-//    }
-
-
-

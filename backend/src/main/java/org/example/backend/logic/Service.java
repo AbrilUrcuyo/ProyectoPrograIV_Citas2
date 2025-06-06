@@ -200,6 +200,10 @@ public class Service {
          citaRepository.save(cita);
     }
 
+    public List<Cita> obtenerCitasPorPaciente(String idPaciente) {
+        return citaRepository.findByIdPaciente_Id(idPaciente);
+    }
+
     //---------History----------
     public Paciente findPacienteById(String idPaciente) {
         return pacienteRepository.findById(idPaciente).orElse(null);
