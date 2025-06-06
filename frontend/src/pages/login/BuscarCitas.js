@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import "./BuscarCitas.css";
 import { AppContext } from '../../AppProvider';
+import ViewCitaConfirmacion from "../pacientes/ConfirmView";
 
 
 // Modifica la función para usar los datos por defecto si no recibe props
@@ -10,6 +11,8 @@ function BuscarCitas() {
 
     const [medicos, setMedicos] = useState([]);
     const [citasPorMedico, setCitasPorMedico] = useState({});
+    const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+    const [datosCitaSeleccionada, setDatosCitaSeleccionada] = useState(null);
     const backend="http://localhost:8080";
     const [especialidad, setEspecialidad] = useState("");
     const [localidad, setLocalidad] = useState("");
@@ -240,15 +243,14 @@ function BuscarCitas() {
                                                                     }
                                                                     className="botones"
                                                                     onClick={() => {
-                                                                        navigate("/confirmView", {
-                                                                            state: {
-                                                                                idM: medico.id,
-                                                                                fecha: formatearFechaISO(listaH.key),
-                                                                                hora: hora,
-                                                                                nombreMedico: medico.nombre,
-                                                                                localidad: medico.localidad,
-                                                                            }
+                                                                        setDatosCitaSeleccionada({
+                                                                            idM: medico.id,
+                                                                            fecha: formatearFechaISO(listaH.key),
+                                                                            hora: hora,
+                                                                            nombreMedico: medico.nombre,
+                                                                            localidad: medico.localidad,
                                                                         });
+                                                                        setMostrarConfirmacion(true);
                                                                     }}
                                                                 >
                                                                     {hora}
@@ -277,16 +279,12 @@ function BuscarCitas() {
             </div>
 
             {/*Renderizado condicional del componente de confirmación */}
-            {/*{mostrarConfirmacion && datosCitaSeleccionada && (*/}
-            {/*    <ViewCitaConfirmacion*/}
-            {/*        idM={datosCitaSeleccionada.idM}*/}
-            {/*        fecha={datosCitaSeleccionada.fecha}*/}
-            {/*        hora={datosCitaSeleccionada.hora}*/}
-            {/*        nombreMedico={datosCitaSeleccionada.nombreMedico}*/}
-            {/*        localidad={datosCitaSeleccionada.localidad}*/}
-            {/*        onCerrar={() => setMostrarConfirmacion(false)}*/}
-            {/*    />*/}
-            {/*)}*/}
+            {mostrarConfirmacion && datosCitaSeleccionada && (
+                <ViewCitaConfirmacion
+                    {...datosCitaSeleccionada}
+                    onCerrar={() => setMostrarConfirmacion(false)}
+                />
+            )}
         </div>
     );
 }
