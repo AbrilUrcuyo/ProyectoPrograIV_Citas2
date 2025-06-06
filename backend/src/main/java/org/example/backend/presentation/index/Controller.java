@@ -1,6 +1,7 @@
 package org.example.backend.presentation.index;
 
 
+import org.example.backend.logic.Cita;
 import org.example.backend.logic.Medico;
 import org.example.backend.logic.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
 
 @RestController("indexController")
 @RequestMapping("/")
@@ -19,24 +21,14 @@ public class Controller {
     @Autowired
     private Service service;
 
-//    public record CitaDto(Integer id, LocalDate fecha, LocalTime hora, String estado, String anotaciones) { }
+    public record CitaDto(Integer id, LocalDate fecha, LocalTime hora) { }
     public record HorarioDTO(Integer id, Integer diaSemana, LocalTime horaInicio, LocalTime horaFin){}
-    public record MedicoDto(String id, String nombre, String especialidad,int costoConsulta,String localidad, List<HorarioDTO> horarios) { }
+    public record MedicoDto(String id, String nombre, String especialidad, int costoConsulta, String localidad, int frecCitas, List<HorarioDTO> horarios, List<CitaDto> citasOcupadas) { }
     @GetMapping
     public List<MedicoDto> index() {
         List<Medico> medicos = service.medicosAceptados();
 
         return medicos.stream().map(medico -> {
-//            List<CitaDto> citasDto = medico.getCitas().stream()
-//                    .map(cita -> new CitaDto(
-//                            cita.getId(),
-//                            cita.getFecha(),
-//                            cita.getHora(),
-//                            cita.getEstado(),
-//                            cita.getAnotaciones()
-//                    ))
-//                    .toList();
-
             List<HorarioDTO> horariosDto = medico.getHorarios().stream()
                     .map(h -> new HorarioDTO(
                             h.getId(),
@@ -46,13 +38,23 @@ public class Controller {
                     ))
                     .toList();
 
+            List<CitaDto> citasDto = medico.getCitas().stream().map(
+                    c -> new CitaDto(
+                            c.getId(),
+                            c.getFecha(),
+                            c.getHora()
+                    )
+            ).toList();
+
             return new MedicoDto(
                     medico.getId(),
                     medico.getNombre(),
                     medico.getEspecialidad(),
                     medico.getCostoConsulta(),
                     medico.getLocalidad(),
-                    horariosDto
+                    medico.getFrecCitas(),
+                    horariosDto,
+                    citasDto
             );
         }).toList();
     }
