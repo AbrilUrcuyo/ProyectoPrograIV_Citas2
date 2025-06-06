@@ -14,26 +14,42 @@ function BuscarCitas() {
     const [especialidad, setEspecialidad] = useState("");
     const [localidad, setLocalidad] = useState("");
     const navigate = useNavigate();
-    const medicosFiltrados = medicos.filter(medico => {
-        const especialidad = medico.especialidad || "";
-        const localidad = medico.localidad || "";
-        const matchEspecialidad = buscarCitas.especialidad === "" || especialidad.toLowerCase().includes(buscarCitas.especialidad.toLowerCase());
-        const matchLocalidad = buscarCitas.localidad === "" || localidad.toLowerCase().includes(buscarCitas.localidad.toLowerCase());
-        return matchEspecialidad && matchLocalidad;
-    });
+    const token = localStorage.getItem('_token');
 
 
-    useEffect(()=>{
-        if(medicos.length === 0)
-            handleList();
-    }, [])
+    useEffect(() => {
+        // Si no hay médicos filtrados, hacer búsqueda inicial
+        if (!buscarCitas.medicosFiltrados) {
+            handleSearch();
+        } else {
+            setMedicos(buscarCitas.medicosFiltrados);
+        }
+        handleList(); // Obtener información adicional
+    }, []);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Aquí deberías llamar a tu API o función de búsqueda
-        // Ejemplo: buscarMedicos(especialidad, localidad)
-    };
-
+    const handleSearch = (e) => {
+        if (e) e.preventDefault();
+        const request = new Request(backend + '/buscar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                especialidad: buscarCitas.especialidad,
+                localidad: buscarCitas.localidad,
+            })
+        });
+        (async () => {
+            const response = await fetch(request);
+            if (!response.ok) {
+                alert("Error: " + response.status);
+                return;
+            }
+            const medicos = await response.json();
+            setMedicos(medicos || []);
+            setBuscarCitas(prev=> ({...prev, medicosFiltrados: medicos}));
+        })();
+    }
     // Función auxiliar para obtener la próxima fecha de un día de la semana (1=Lunes, 7=Domingo)
     function obtenerProximaFechaDeSemana(diaSemana) {
         const hoy = new Date();
@@ -177,13 +193,15 @@ function BuscarCitas() {
                         value={buscarCitas.localidad}
                         onChange={e => setBuscarCitas({...buscarCitas, localidad: e.target.value})}
                     />
+
                 </form>
+                <button type="submit" className="search-button" onClick={handleSearch}>Search</button>
             </div>
 
             <div className="doctor-list">
                 {medicos.length > 0 ? (
                     <ul>
-                        {medicosFiltrados.map((medico) => (
+                        {buscarCitas.medicosFiltrados?.map((medico) => (
                             <li key={medico.id}>
                                 <div className="doctor-card">
                                     <div>
