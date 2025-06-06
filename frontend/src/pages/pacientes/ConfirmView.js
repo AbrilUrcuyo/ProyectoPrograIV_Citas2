@@ -1,18 +1,26 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./ConfirmView.css";
 import userImg from "../images/user.png";
 
 function ViewCitaConfirmacion({ idM, fecha, hora, nombreMedico, localidad, onCerrar }) {
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleConfirmar = async (e) => {
         e.preventDefault();
+        const token = localStorage.getItem('_token');
+        if (!token) {
+            alert("Debes iniciar sesión para confirmar una cita.");
+            navigate("/login");
+            return;
+        }
         setLoading(true);
         try {
             const response = await fetch(`http://localhost:8080/pacientes/confirmarCita`, {
                 method: "POST",
                 headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('_token'),
+                    'Authorization': 'Bearer ' + token,
                     "Accept": "application/json",
                     "Content-Type": "application/json"
                 },
