@@ -34,12 +34,44 @@ function BuscarCitas() {
         // Ejemplo: buscarMedicos(especialidad, localidad)
     };
 
+    // Función auxiliar para obtener la próxima fecha de un día de la semana (1=Lunes, 7=Domingo)
+    function obtenerProximaFechaDeSemana(diaSemana) {
+        const hoy = new Date();
+        const diaActual = hoy.getDay() === 0 ? 7 : hoy.getDay(); // JS: 0=Domingo
+        const diff = (diaSemana - diaActual + 7) % 7;
+        const fecha = new Date(hoy);
+        fecha.setDate(hoy.getDate() + diff);
+        // Fuerza formato dd/mm/yyyy con ceros a la izquierda
+        const day = String(fecha.getDate()).padStart(2, '0');
+        const month = String(fecha.getMonth() + 1).padStart(2, '0');
+        const year = fecha.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
+    // Genera horas disponibles entre inicio y fin según la frecuencia (en minutos)
+    function generarHorasDisponibles(horaInicio, horaFin, frecuenciaMin) {
+    const [hIni, mIni] = horaInicio.split(':').map(Number);
+    const [hFin, mFin] = horaFin.split(':').map(Number);
+    const horas = [];
+    let current = new Date(0, 0, 0, hIni, mIni, 0);
+    const end = new Date(0, 0, 0, hFin, mFin, 0);
+
+    while (current < end) {
+        const hh = String(current.getHours()).padStart(2, '0');
+        const mm = String(current.getMinutes()).padStart(2, '0');
+        const horaStr = `${hh}:${mm}`; // Siempre "HH:mm"
+        horas.push(horaStr);
+        current.setMinutes(current.getMinutes() + frecuenciaMin);
+    }
+    return horas;
+    }
+
+// --- En adaptarDatosBackend ---
     function adaptarDatosBackend(medicosBackend) {
         const medicos = [];
         const citasPorMedico = {};
 
         medicosBackend.forEach(medico => {
-            // Adaptar datos básicos
             medicos.push({
                 id: medico.id,
                 nombre: medico.nombre,
@@ -48,19 +80,21 @@ function BuscarCitas() {
                 localidad: medico.localidad
             });
 
-            // Adaptar horarios disponibles (simulación: agrupa por día de la semana)
+            // Adaptar horarios disponibles usando la frecuencia de cada médico
             if (medico.horarios && medico.horarios.length > 0) {
                 const horariosPorDia = {};
                 medico.horarios.forEach(horario => {
                     const fecha = obtenerProximaFechaDeSemana(horario.diaSemana);
                     if (!horariosPorDia[fecha]) horariosPorDia[fecha] = [];
-                    const horas = generarHorasDisponibles(horario.horaInicio, horario.horaFin);
+                    const horas = generarHorasDisponibles(
+                        horario.horaInicio,
+                        horario.horaFin,
+                        medico.frecCitas || 30 // Usa 30 como valor por defecto si no viene
+                    );
                     horariosPorDia[fecha].push(...horas);
                 });
 
-                // Ordena las fechas cronológicamente antes de mapearlas
                 const fechasOrdenadas = Object.keys(horariosPorDia).sort((a, b) => {
-                    // Convierte "dd/mm/yyyy" a Date para comparar
                     const [da, ma, ya] = a.split('/').map(Number);
                     const [db, mb, yb] = b.split('/').map(Number);
                     return new Date(ya, ma - 1, da) - new Date(yb, mb - 1, db);
@@ -74,32 +108,24 @@ function BuscarCitas() {
                 citasPorMedico[`${medico.id}H`] = [];
             }
 
-            // Adaptar citas ocupadas (simulación: vacío)
-            citasPorMedico[`${medico.id}O`] = {}; // Llena según tus datos reales
+            // Adaptar citas ocupadas
+            citasPorMedico[`${medico.id}O`] = {};
+            if (Array.isArray(medico.citasOcupadas)) {
+                medico.citasOcupadas.forEach(cita => {
+                    const [anio, mes, dia] = cita.fecha.split("-");
+                    const fechaFormateada = `${dia.padStart(2, "0")}/${mes.padStart(2, "0")}/${anio}`;
+                    if (!citasPorMedico[`${medico.id}O`][fechaFormateada]) {
+                        citasPorMedico[`${medico.id}O`][fechaFormateada] = [];
+                    }
+                    // Asegura formato "HH:mm"
+                    const [h, m] = cita.hora.split(':');
+                    const horaSolo = `${h.padStart(2, '0')}:${m.padStart(2, '0')}`;
+                    citasPorMedico[`${medico.id}O`][fechaFormateada].push(horaSolo);
+                });
+            }
         });
 
         return { medicos, citasPorMedico };
-    }
-
-    // Función auxiliar para obtener la próxima fecha de un día de la semana (1=Lunes, 7=Domingo)
-    function obtenerProximaFechaDeSemana(diaSemana) {
-        const hoy = new Date();
-        const diaActual = hoy.getDay() === 0 ? 7 : hoy.getDay(); // JS: 0=Domingo
-        const diff = (diaSemana - diaActual + 7) % 7;
-        const fecha = new Date(hoy);
-        fecha.setDate(hoy.getDate() + diff);
-        return fecha.toLocaleDateString('es-CR'); // "dd/mm/yyyy"
-    }
-
-    // Genera horas disponibles entre inicio y fin (formato "HH:mm:ss")
-    function generarHorasDisponibles(horaInicio, horaFin) {
-        const [hIni, mIni] = horaInicio.split(':').map(Number);
-        const [hFin, mFin] = horaFin.split(':').map(Number);
-        const horas = [];
-        for (let h = hIni; h < hFin; h++) {
-            horas.push(`${h.toString().padStart(2, '0')}:00`);
-        }
-        return horas;
     }
 
     // Modifica handleList para usar la adaptación:
@@ -191,8 +217,7 @@ function BuscarCitas() {
                                                             <li key={hora}>
                                                                 <button
                                                                     disabled={
-                                                                        citasPorMedico[`${medico.id}O`] &&
-                                                                        citasPorMedico[`${medico.id}O`][listaH.key] &&
+                                                                        Array.isArray(citasPorMedico[`${medico.id}O`]?.[listaH.key]) &&
                                                                         citasPorMedico[`${medico.id}O`][listaH.key].includes(hora)
                                                                     }
                                                                     className="botones"
@@ -207,7 +232,6 @@ function BuscarCitas() {
                                                                             }
                                                                         });
                                                                     }}
-
                                                                 >
                                                                     {hora}
                                                                 </button>
