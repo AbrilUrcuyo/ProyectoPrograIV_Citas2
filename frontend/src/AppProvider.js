@@ -6,11 +6,18 @@ function AppProvider(props){
     const [buscarCitas, setBuscarCitas] = useState({
         localidad: "",
         especialidad: "",
+        medicosFiltrados: null,
     });
 
     const [gestionCitas, setGestionCitas] = useState({
         filterE:"Todas",
         filterP:"",
+        citasFiltradas: null,
+    });
+
+    const [historico, setHistorico] = useState({
+        estado:"Todas",
+        nombreM:"",
         citasFiltradas: null,
     });
     return(
@@ -19,7 +26,10 @@ function AppProvider(props){
             setBuscarCitas: setBuscarCitas,
 
             gestionCitas: gestionCitas,
-            setGestionCitas: setGestionCitas
+            setGestionCitas: setGestionCitas,
+
+            historicoCitas: historico,
+            setHistorico: setHistorico,
         }}>
             {props.children}
         </AppContext.Provider>

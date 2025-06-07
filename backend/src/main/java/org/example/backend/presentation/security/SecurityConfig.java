@@ -49,9 +49,9 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         // Rutas públicas
-                        .requestMatchers("/", "/horarios/show/**", "/usuarios/**", "/error").permitAll()
+                        .requestMatchers("/","/buscar", "/horarios/show/**", "/usuarios/**", "/error").permitAll()
                         // Rutas para pacientes
-                        .requestMatchers( "/pacientes/citas", "/pacientes/confirmarCita").hasAuthority("Paciente")
+                        .requestMatchers( "/pacientes/citas", "/pacientes/confirmarCita", "/pacientes/buscar").hasAuthority("Paciente")
                         // Rutas para médicos
                         .requestMatchers("/medicos/**", "/horarios/showIngresoH", "/horarios/ingresarH", "/citas/**").hasAuthority("Medico")
                         // Rutas para administradores

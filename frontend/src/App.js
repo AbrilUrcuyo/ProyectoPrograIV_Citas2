@@ -19,15 +19,66 @@ import PerfilMedicoView from "./pages/medicos/PerfilMedicoView";
 import GestionCitas from "./pages/medicos/GestionCitas";
 import AppProvider from "./AppProvider";
 
+import { useContext } from 'react';  // Añade esta importación
+import { AppContext } from './AppProvider';
+
 function Header({user, setUser}) {
     const navigate = useNavigate();
+    const {
+        setBuscarCitas,
+        setGestionCitas,
+        setHistorico
+    } = useContext(AppContext);
 
-
-    function logout() {
+    async function logout() {
         localStorage.removeItem('_token');
         setUser({ id: null, rol: '', name: '' });
+
+        // Limpiar estados
+        setBuscarCitas({
+            localidad: "",
+            especialidad: "",
+            medicosFiltrados: null,
+        });
+
+        setGestionCitas({
+            filterE: "Todas",
+            filterP: "",
+            citasFiltradas: null,
+        });
+
+        setHistorico({
+            estado: "Todas",
+            nombreM: "",
+            citasFiltradas: null,
+        });
+
+
+        try {
+            const response = await fetch('http://localhost:8080/buscar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    especialidad: "",
+                    localidad: "",
+                })
+            });
+
+            if (response.ok) {
+                const medicos = await response.json();
+                setBuscarCitas(prev => ({...prev, medicosFiltrados: medicos}));
+            }
+        } catch (error) {
+            console.error("Error en búsqueda inicial:", error);
+        }
+
         navigate('/');
     }
+
+
+
 
     let links;
 
@@ -91,14 +142,14 @@ function App() {
     const[user, setUser]= useState({id:null, rol:'', name:''});
 
     useEffect( ()=> {
-           const token = localStorage.getItem('_token');
-            if(token){
-                const userData = decodeToken(token);
-                setUser(userData);
-            }
+        const token = localStorage.getItem('_token');
+        if(token){
+            const userData = decodeToken(token);
+            setUser(userData);
+        }
     }, []);
 
-    
+
 
     return (
         <div className="App">
