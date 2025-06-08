@@ -243,14 +243,14 @@ function BuscarCitas() {
                                                                     }
                                                                     className="botones"
                                                                     onClick={() => {
-                                                                        setDatosCitaSeleccionada({
+                                                                        setBuscarCitas({...buscarCitas,  mostrarConfirmacion: true, datosCitaSeleccionada: {
                                                                             idM: medico.id,
                                                                             fecha: formatearFechaISO(listaH.key),
                                                                             hora: hora,
                                                                             nombreMedico: medico.nombre,
                                                                             localidad: medico.localidad,
-                                                                        });
-                                                                        setMostrarConfirmacion(true);
+                                                                        }});
+                                                                        // setBuscarCitas({...buscarCitas,});
                                                                     }}
                                                                 >
                                                                     {hora}
@@ -279,11 +279,11 @@ function BuscarCitas() {
             </div>
 
             {/*Renderizado condicional del componente de confirmación */}
-            {mostrarConfirmacion && datosCitaSeleccionada && (
+            {buscarCitas.mostrarConfirmacion && buscarCitas.datosCitaSeleccionada && (
                 <ViewCitaConfirmacion
-                    {...datosCitaSeleccionada}
-                    onCerrar={() => setMostrarConfirmacion(false)}
-                    onCitaConfirmada={handleList}
+                    {...buscarCitas.datosCitaSeleccionada}
+                    onCerrar={() => setBuscarCitas({...buscarCitas, mostrarConfirmacion: false})}
+                    pagina='/'
                 />
             )}
         </div>

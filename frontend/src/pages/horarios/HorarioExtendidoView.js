@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import "./Horarios.css";
-import ViewCitaConfirmacion from "../pacientes/ConfirmView"; // Añade esta importación
+import ViewCitaConfirmacion from "../pacientes/ConfirmView";
+import {AppContext} from "../../AppProvider"; // Añade esta importación
 
 function HorarioExtendidoView() {
     const { idMedico, fecha } = useParams();
@@ -9,13 +10,15 @@ function HorarioExtendidoView() {
 }
 
 function HorarioExtendido({idMedico, fechaI}) {
+    const {horarioExt, setHorarioExt} = useContext(AppContext);
+
     const [fecha, setFecha] = useState(fechaI);
     const [medico, setMedico] = useState({});
     const [fechas, setFechas] = useState([]);
     const [citas, setCitas] = useState({});
     const [ocupadas, setOcupadas] = useState({});
-    const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
-    const [datosCitaSeleccionada, setDatosCitaSeleccionada] = useState(null);
+    // const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+    // const [datosCitaSeleccionada, setDatosCitaSeleccionada] = useState(null);
     const navigate = useNavigate();
 
 
@@ -96,7 +99,7 @@ function HorarioExtendido({idMedico, fechaI}) {
                 <div className="container-Fer row space-evenly">
                     <div>
                         <button className="botones" onClick={onPrev}>
-                            <img src="/images/flecha-izquierda.png" alt="Prev" />
+                            <img src="/images/flecha-izquierda.png" alt="Prev"/>
                             Prev
                         </button>
                     </div>
@@ -132,14 +135,13 @@ function HorarioExtendido({idMedico, fechaI}) {
                                             className="botones"
                                             disabled={ocupadas[fecha.trim()] && ocupadas[fecha.trim()].includes(cita)}
                                             onClick={() => {
-                                                setDatosCitaSeleccionada({
+                                                setHorarioExt({mostrarConfirmacion: true, datosCitaSeleccionada: {
                                                     idM: idMedico,
                                                     fecha: formatearFechaISO(fecha),
                                                     hora: cita,
                                                     nombreMedico: medico.nombre,
                                                     localidad: medico.localidad,
-                                                });
-                                                setMostrarConfirmacion(true);
+                                                }});
                                             }}
                                         >
                                             {cita}
@@ -152,7 +154,7 @@ function HorarioExtendido({idMedico, fechaI}) {
 
                     <div>
                         <button className="botones" onClick={onNext}>
-                            <img src="/images/flecha-derecha.png" alt="Next" />
+                            <img src="/images/flecha-derecha.png" alt="Next"/>
                             Next
                         </button>
                     </div>
@@ -165,11 +167,12 @@ function HorarioExtendido({idMedico, fechaI}) {
                 </div>
             </div>
 
-            {mostrarConfirmacion && datosCitaSeleccionada && (
+
+            {horarioExt.mostrarConfirmacion && horarioExt.datosCitaSeleccionada && (
                 <ViewCitaConfirmacion
-                    {...datosCitaSeleccionada}
-                    onCerrar={() => setMostrarConfirmacion(false)}
-                    onCitaConfirmada={handleHorario} // Esto actualizará los datos después de confirmar
+                    {...horarioExt.datosCitaSeleccionada}
+                    onCerrar={() => setHorarioExt({...horarioExt, mostrarConfirmacion: false})}
+                    pagina={'/horarioExtend/' + idMedico + '/' + fecha}
                 />
             )}
         </div>

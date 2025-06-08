@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './LoginView.css';
 
 import userImg from '../images/user.png';
@@ -13,6 +13,8 @@ function LoginView ({setUser}) {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const location = useLocation();
+    const pagAnterior = location.state?.pagAnterior || '/'; // valor por defecto
 
 
     // ...existing code...
@@ -47,7 +49,7 @@ function LoginView ({setUser}) {
             }else if(userData.rol==='Medico'){
                 navigate('/PerfilMedico');
             }else {
-                navigate('/');
+                navigate(pagAnterior);
             }
 
 

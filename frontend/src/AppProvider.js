@@ -7,6 +7,8 @@ function AppProvider(props){
         localidad: "",
         especialidad: "",
         medicosFiltrados: null,
+        mostrarConfirmacion: false,
+        datosCitaSeleccionada: {}
     });
 
     const [gestionCitas, setGestionCitas] = useState({
@@ -20,6 +22,12 @@ function AppProvider(props){
         nombreM:"",
         citasFiltradas: null,
     });
+
+    const [horarioExt, setHorarioExt] = useState({
+        mostrarConfirmacion: false,
+        datosCitaSeleccionada: {}
+    });
+
     return(
         <AppContext.Provider value={{
             buscarCitas: buscarCitas,
@@ -30,6 +38,9 @@ function AppProvider(props){
 
             historicoCitas: historico,
             setHistorico: setHistorico,
+
+            horarioExt: horarioExt,
+            setHorarioExt: setHorarioExt,
         }}>
             {props.children}
         </AppContext.Provider>

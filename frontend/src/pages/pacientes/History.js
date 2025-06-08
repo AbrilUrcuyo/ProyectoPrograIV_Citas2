@@ -17,7 +17,7 @@ function History() {
 
     useEffect(() => {
         handleList();
-        if(historicoCitas.citasFiltradas) {
+        if((historicoCitas.estado !== "Todas" && historicoCitas.estado !== "Pendiente") || historicoCitas.nombreM !== "") {
             setCitas(historicoCitas.citasFiltradas);
         }else{
             handleSearch();

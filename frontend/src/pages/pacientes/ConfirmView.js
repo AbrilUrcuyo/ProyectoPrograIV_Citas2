@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import ReactDOM from "react-dom";
 import { useNavigate } from "react-router-dom";
 import "./ConfirmView.css";
 import userImg from "../images/user.png";
 
-function ViewCitaConfirmacion({ idM, fecha, hora, nombreMedico, localidad, onCerrar, onCitaConfirmada }) {
+function ViewCitaConfirmacion({ idM, fecha, hora, nombreMedico, localidad, onCerrar, pagina}) {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -12,7 +13,7 @@ function ViewCitaConfirmacion({ idM, fecha, hora, nombreMedico, localidad, onCer
         const token = localStorage.getItem('_token');
         if (!token) {
             alert("Debes iniciar sesión para confirmar una cita.");
-            navigate("/login");
+            navigate("/login", { state: { pagAnterior: pagina } });
             return;
         }
         setLoading(true);
@@ -33,7 +34,7 @@ function ViewCitaConfirmacion({ idM, fecha, hora, nombreMedico, localidad, onCer
 
             if (response.ok) {
                 alert("Cita confirmada con éxito");
-                if (onCitaConfirmada) onCitaConfirmada(); // Llamar al callback
+                navigate("/history");
                 onCerrar();
             } else {
                 alert("Error al confirmar la cita");
@@ -44,7 +45,8 @@ function ViewCitaConfirmacion({ idM, fecha, hora, nombreMedico, localidad, onCer
         setLoading(false);
     };
 
-    return (
+    // El modal se renderiza en el body usando React Portal
+    return ReactDOM.createPortal(
         <div className="modal-overlay">
             <div className="confirmation-card modal">
                 <button className="close-modal" onClick={onCerrar}>×</button>
@@ -67,7 +69,8 @@ function ViewCitaConfirmacion({ idM, fecha, hora, nombreMedico, localidad, onCer
                     </button>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
 
