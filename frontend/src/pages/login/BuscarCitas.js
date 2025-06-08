@@ -283,6 +283,7 @@ function BuscarCitas() {
                 <ViewCitaConfirmacion
                     {...datosCitaSeleccionada}
                     onCerrar={() => setMostrarConfirmacion(false)}
+                    onCitaConfirmada={handleList}
                 />
             )}
         </div>

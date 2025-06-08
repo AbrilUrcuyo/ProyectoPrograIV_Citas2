@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./ConfirmView.css";
 import userImg from "../images/user.png";
 
-function ViewCitaConfirmacion({ idM, fecha, hora, nombreMedico, localidad, onCerrar }) {
+function ViewCitaConfirmacion({ idM, fecha, hora, nombreMedico, localidad, onCerrar, onCitaConfirmada }) {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -33,6 +33,7 @@ function ViewCitaConfirmacion({ idM, fecha, hora, nombreMedico, localidad, onCer
 
             if (response.ok) {
                 alert("Cita confirmada con éxito");
+                if (onCitaConfirmada) onCitaConfirmada(); // Llamar al callback
                 onCerrar();
             } else {
                 alert("Error al confirmar la cita");

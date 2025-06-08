@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import "./Horarios.css";
+import ViewCitaConfirmacion from "../pacientes/ConfirmView"; // Añade esta importación
 
 function HorarioExtendidoView() {
     const { idMedico, fecha } = useParams();
@@ -13,6 +14,8 @@ function HorarioExtendido({idMedico, fechaI}) {
     const [fechas, setFechas] = useState([]);
     const [citas, setCitas] = useState({});
     const [ocupadas, setOcupadas] = useState({});
+    const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+    const [datosCitaSeleccionada, setDatosCitaSeleccionada] = useState(null);
     const navigate = useNavigate();
 
 
@@ -58,25 +61,33 @@ function HorarioExtendido({idMedico, fechaI}) {
         }
     }, [fecha, idMedico]);
 
+    // Agrégala junto a las otras funciones auxiliares
+    function formatearFechaISO(fecha) {
+        const [dia, mes, anio] = fecha.split(/[-\/]/);
+        return `${anio}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+    }
+
+    // Agrega esta función dentro del componente HorarioExtendido
     function handleHorario() {
         const request = new Request(backend + '/horarios/show/' + idMedico + '/' + fecha, {
             method: 'GET'
         });
         (async () => {
             const response = await fetch(request);
-            if (!response.ok) { alert("Error: " + response.status); return; }
+            if (!response.ok) {
+                alert("Error: " + response.status);
+                return;
+            }
             const datos = await response.json();
-            setMedico(datos.medico);
+            setMedico({
+                ...datos.medico,
+                nombre: datos.medico.nombre || '',
+                localidad: datos.medico.localidad || ''
+            });
             setFechas(datos.fechas);
             setCitas(datos.citas);
             setOcupadas(datos.ocupadas);
         })();
-    }
-
-    function formatearFechaISO(fecha) {
-        // Suponiendo que fecha es "dd-mm-yyyy" o "dd/mm/yyyy"
-        const [dia, mes, anio] = fecha.split(/[-\/]/);
-        return `${anio}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
     }
 
     return (
@@ -115,31 +126,26 @@ function HorarioExtendido({idMedico, fechaI}) {
                         <div key={fecha}>
                             <p className="cita-date">{fecha}</p>
                             <ul className="lista-horas">
-                                {citas[fecha?.trim()] &&
-                                    citas[fecha.trim()].map((cita) => (
-                                        <li key={cita}>
-                                            <button
-                                                className="botones"
-                                                disabled={
-                                                    ocupadas[fecha.trim()] &&
-                                                    ocupadas[fecha.trim()].includes(cita)
-                                                }
-                                                onClick={() => {
-                                                    navigate("/confirmView", {
-                                                        state: {
-                                                            idM: medico.id,
-                                                            fecha: formatearFechaISO(fecha),
-                                                            hora: cita,
-                                                            nombreMedico: medico.nombre,
-                                                            localidad: medico.localidad,
-                                                        }
-                                                    });
-                                                }}
-                                            >
-                                                {cita}
-                                            </button>
-                                        </li>
-                                    ))}
+                                {citas[fecha.trim()] && citas[fecha.trim()].map((cita) => (
+                                    <li key={cita}>
+                                        <button
+                                            className="botones"
+                                            disabled={ocupadas[fecha.trim()] && ocupadas[fecha.trim()].includes(cita)}
+                                            onClick={() => {
+                                                setDatosCitaSeleccionada({
+                                                    idM: idMedico,
+                                                    fecha: formatearFechaISO(fecha),
+                                                    hora: cita,
+                                                    nombreMedico: medico.nombre,
+                                                    localidad: medico.localidad,
+                                                });
+                                                setMostrarConfirmacion(true);
+                                            }}
+                                        >
+                                            {cita}
+                                        </button>
+                                    </li>
+                                ))}
                             </ul>
                         </div>
                     ))}
@@ -158,6 +164,14 @@ function HorarioExtendido({idMedico, fechaI}) {
                     </button>
                 </div>
             </div>
+
+            {mostrarConfirmacion && datosCitaSeleccionada && (
+                <ViewCitaConfirmacion
+                    {...datosCitaSeleccionada}
+                    onCerrar={() => setMostrarConfirmacion(false)}
+                    onCitaConfirmada={handleHorario} // Esto actualizará los datos después de confirmar
+                />
+            )}
         </div>
 
 
