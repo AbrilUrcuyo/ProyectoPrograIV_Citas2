@@ -1,4 +1,6 @@
-import {useEffect, useState} from 'react'
+import React, { useState } from "react";
+import ReactDOM from "react-dom";
+import { useNavigate } from "react-router-dom";
 import './LoginView.css';
 
 import userImg from '../images/user.png';
@@ -16,6 +18,7 @@ function RegisterView() {
     const [name, setName] = useState('');
     const [userType, setUserType] = useState('Paciente');
     const [photo, setPhoto] = useState(null);
+    const navigate = useNavigate(); 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -46,10 +49,12 @@ function RegisterView() {
                     const data = await response.json();
                     alert(data.message || "Usuario registrado correctamente");
                     console.log("Respuesta:", data);
+                    navigate("/login");
                 } else {
                     const text = await response.text();
                     alert(text);
                     console.log("Respuesta:", text);
+                    navigate("/login");
                 }
             } else {
                 const errorText = await response.text();
