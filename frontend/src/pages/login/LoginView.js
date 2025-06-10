@@ -34,11 +34,13 @@ function LoginView ({setUser}) {
                     clave: password
                 })
             });
+            const data = await response.json();
+
             if (!response.ok) {
-                setError('Usuario o contraseña incorrectos');
+                // Si el backend envía un mensaje de error, úsalo
+                setError(data.error || 'Usuario o contraseña incorrectos');
                 return;
             }
-            const data = await response.json();
             // Guarda el token en localStorage
             localStorage.setItem('_token', data.token);
             const userData = decodeToken(data.token);

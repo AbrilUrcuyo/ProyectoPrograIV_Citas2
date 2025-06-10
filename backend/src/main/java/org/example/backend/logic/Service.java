@@ -223,7 +223,7 @@ public class Service {
 
         medico.setLocalidad(localidad);
         medico.setDescripcion(descripcion);
-        medico.setEstadoAprob("Aprobado");
+//        medico.setEstadoAprob("Aprobado");
         medico.setFrecCitas(frecuencia);
         medicoRepository.save(medico);
     }

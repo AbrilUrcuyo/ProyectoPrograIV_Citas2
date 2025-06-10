@@ -1,5 +1,6 @@
 package org.example.backend.presentation.usuarios;
 
+import org.example.backend.logic.Medico;
 import org.example.backend.logic.Service;
 import org.example.backend.logic.Usuario;
 import org.example.backend.data.UsuarioRepository;
@@ -101,7 +102,17 @@ public class Controller {
                     new UsernamePasswordAuthenticationToken(user.getId(), user.getClave()));
             String token = tokenService.generateToken(authentication);
             // Devuelve el token en un JSON
-            return ResponseEntity.ok(Collections.singletonMap("token", token));
+
+            Medico m = service.findMedicoById(user.getId());
+
+            if(!Objects.equals(m.getId(), "") && Objects.equals(m.getEstadoAprob(), "Pendiente")){
+                return ResponseEntity.status(401).body(Collections.singletonMap("error", "Medico no autorizado"));
+            }else{
+                System.out.println("ES UN MEDICO APROBADO");
+                return ResponseEntity.ok(Collections.singletonMap("token", token));
+
+            }
+
         } catch (Exception e) {
             return ResponseEntity.status(401).body(Collections.singletonMap("error", "Usuario o contraseña incorrectos"));
         }

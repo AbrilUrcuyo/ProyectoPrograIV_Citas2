@@ -24,6 +24,10 @@ public class Medico {
     @JoinColumn(name = "id", nullable = false)
     private Usuario usuarios;
 
+    public Medico() {
+        this.id = "";
+    }
+
     @Size(max = 30)
     @NotNull
     @Column(name = "nombre", nullable = false, length = 30)
