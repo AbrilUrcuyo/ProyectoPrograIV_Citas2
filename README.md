@@ -99,4 +99,3 @@ Laura Flores Barrantes
 
 ---
 
-¿Quieres mejorar este proyecto? Considera agregar documentación de la API (Swagger), tests automatizados, despliegue en la nube y capturas de pantalla para enriquecer tu portafolio.
