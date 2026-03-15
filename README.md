@@ -95,7 +95,7 @@ ProyectoPrograIV_Citas2/
 ## Autores
 Abril Urcuyo Arce,
 María Fernanda Segura Largaespada,
-Laura Flores Barrantes
+Laura Flores Barrantes.
 
 ---
 
