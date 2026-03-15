@@ -93,8 +93,8 @@ ProyectoPrograIV_Citas2/
 ¡Las contribuciones son bienvenidas! Puedes abrir issues o pull requests para sugerir mejoras o reportar errores.
 
 ## Autores
-Abril Urcuyo Arce
-María Fernanda Segura Largaespada
+Abril Urcuyo Arce,
+María Fernanda Segura Largaespada,
 Laura Flores Barrantes
 
 ---
